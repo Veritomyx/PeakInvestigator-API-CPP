@@ -58,7 +58,11 @@ namespace Veritomyx
         double getCost(std::string responseTimeObjective) const;
     };
 
-    typedef std::map<std::string, ResponseTimeCosts>::const_iterator EstimatedCostsIterator;
+    class EstimatedCosts : public std::map<std::string, ResponseTimeCosts>
+    {
+      public:
+        ResponseTimeCosts forInstrument(std::string) const;
+    };
 
     class InitAction : public BaseAction
     {
@@ -71,7 +75,7 @@ namespace Veritomyx
         int min_mass_;
         int max_mass_;
         int calibration_count_;
-        std::map<std::string, ResponseTimeCosts> estimated_costs_;
+        EstimatedCosts estimated_costs_;
 
       public:
         static const std::string EXAMPLE_RESPONSE;
@@ -90,7 +94,7 @@ namespace Veritomyx
 
         double getFunds();
 
-        std::map<std::string, ResponseTimeCosts> getEstimatedCosts();
+        EstimatedCosts getEstimatedCosts();
 
         std::string getErrorMessage();
 

@@ -35,6 +35,7 @@
 //
 
 #include <stdexcept>
+#include <iostream>
 
 #include <PeakInvestigator/Actions/InitAction.h>
 
@@ -96,7 +97,7 @@ double InitAction::getFunds()
   return getDoubleAttribute("Funds");
 }
 
-std::map<std::string, ResponseTimeCosts> InitAction::getEstimatedCosts()
+EstimatedCosts InitAction::getEstimatedCosts()
 {
   if(estimated_costs_.size() > 0)
   {
@@ -108,16 +109,12 @@ std::map<std::string, ResponseTimeCosts> InitAction::getEstimatedCosts()
   Json::Value estimated_costs = response_object_.get("EstimatedCost", Json::nullValue);
   for(uint i = 0; i < estimated_costs.size(); i++)
   {
-    ResponseTimeCosts costs;
-    std::string instrument = estimated_costs.get("Instrument", Json::nullValue).asString();
-    std::string RTO = estimated_costs.get("RTO", Json::nullValue).asString();
-    double cost = estimated_costs.get("Cost", Json::nullValue).asDouble();
+    Json::Value estimated_cost = estimated_costs[i];
+    std::string instrument = estimated_cost.get("Instrument", Json::nullValue).asString();
+    std::string RTO = estimated_cost.get("RTO", Json::nullValue).asString();
+    double cost = estimated_cost.get("Cost", Json::nullValue).asDouble();
 
-    EstimatedCostsIterator iter = estimated_costs_.find(instrument);
-    if(iter != estimated_costs_.end())
-    {
-      costs = iter->second;
-    }
+    ResponseTimeCosts costs = estimated_costs_.forInstrument(instrument);
     costs[RTO] = cost;
     estimated_costs_[instrument] = costs;
   }
@@ -152,10 +149,21 @@ std::list<std::string> ResponseTimeCosts::getRTOs()
 double ResponseTimeCosts::getCost(std::string responseTimeObjective) const
 {
   std::map<std::string, double>::const_iterator iter = find(responseTimeObjective);
-  if(iter != end())
+  if(iter == end())
   {
-    return iter->second;
+    std::string error = "The following RTO was not found: " + responseTimeObjective;
+    throw std::invalid_argument(error);
   }
 
-  return -1.0;
+  return iter->second;
+}
+
+ResponseTimeCosts EstimatedCosts::forInstrument(std::string instrument) const
+{
+  EstimatedCosts::const_iterator iter = find(instrument);
+  if(iter == end()) {
+    return ResponseTimeCosts();
+  }
+
+  return iter->second;
 }
