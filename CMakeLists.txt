@@ -7,6 +7,7 @@ include(include/headers.cmake)
 
 ADD_SUBDIRECTORY(include)
 ADD_SUBDIRECTORY(src)
+ADD_SUBDIRECTORY(test)
 
 SET(HEADERS)
 FOREACH(HEADER ${PEAKINVESTIGATOR_HEADERS})
@@ -16,5 +17,5 @@ ENDFOREACH(HEADER)
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/include
                     ${PROJECT_SOURCE_DIR}/include/jsoncpp)
 
-ADD_EXECUTABLE(Test test.cpp ${HEADERS})
-TARGET_LINK_LIBRARIES(Test PeakInvestigatorSaaS)
+#ADD_EXECUTABLE(Test test.cpp ${HEADERS})
+#TARGET_LINK_LIBRARIES(Test PeakInvestigatorSaaS)
