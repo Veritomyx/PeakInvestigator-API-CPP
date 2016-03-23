@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <iostream>
 
+#include <json/json.h>
 #include <PeakInvestigator/Actions/InitAction.h>
 
 using namespace Veritomyx::PeakInvestigator;
@@ -106,7 +107,7 @@ EstimatedCosts InitAction::getEstimatedCosts()
 
   preCheck();
 
-  Json::Value estimated_costs = response_object_.get("EstimatedCost", Json::nullValue);
+  Json::Value estimated_costs = response_object_->get("EstimatedCost", Json::nullValue);
   for(uint i = 0; i < estimated_costs.size(); i++)
   {
     Json::Value estimated_cost = estimated_costs[i];

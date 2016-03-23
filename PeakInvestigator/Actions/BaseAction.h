@@ -43,7 +43,10 @@
 #include <string>
 #include <vector>
 
-#include <json/json.h>
+namespace Json
+{
+  class Value;
+}
 
 namespace Veritomyx
 {
@@ -60,7 +63,7 @@ namespace Veritomyx
         std::string action_;
 
       protected:
-        Json::Value response_object_;
+        Json::Value* response_object_;
 
       public:
         const static std::string VERSION_OF_API;
@@ -68,7 +71,7 @@ namespace Veritomyx
 
         BaseAction(std::string user, std::string code, std::string action);
 
-        virtual ~BaseAction() {;}
+        virtual ~BaseAction();
 
         virtual std::string buildQuery() const;
 

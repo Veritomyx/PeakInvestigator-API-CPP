@@ -49,8 +49,14 @@ BaseAction::BaseAction(std::string user, std::string code, std::string action)
   user_ = user;
   code_ = code;
   action_ = action;
+
+  response_object_ = new Json::Value();
 }
 
+BaseAction::~BaseAction()
+{
+  delete response_object_;
+}
 
 std::string BaseAction::buildQuery() const
 {
@@ -72,7 +78,7 @@ void BaseAction::processResponse(const std::string response)
   }
 
   Json::Reader reader;
-  bool ok = reader.parse(response, response_object_);
+  bool ok = reader.parse(response, *response_object_);
   if(!ok)
   {
     throw std::runtime_error("Unable to parse the response as JSON data.");
@@ -81,7 +87,7 @@ void BaseAction::processResponse(const std::string response)
 
 bool BaseAction::isReady(std::string action)
 {
-  if (response_object_.isNull())
+  if (response_object_->isNull())
   {
     return false;
   }
@@ -98,12 +104,12 @@ bool BaseAction::isReady(std::string action)
 
 bool BaseAction::hasError()
 {
-  if (response_object_.isNull())
+  if (response_object_->isNull())
   {
     throw new std::invalid_argument("Response was empty.");
   }
 
-  return response_object_.isMember("Error");
+  return response_object_->isMember("Error");
 }
 
 std::string BaseAction::getErrorMessage()
@@ -118,27 +124,27 @@ int BaseAction::getErrorCode()
 
 std::string BaseAction::getStringAttribute(std::string attribute) const
 {
-  return response_object_.get(attribute, Json::nullValue).asString();
+  return response_object_->get(attribute, Json::nullValue).asString();
 }
 
 int BaseAction::getIntAttribute(std::string attribute) const
 {
-  return response_object_.get(attribute, Json::nullValue).asInt();
+  return response_object_->get(attribute, Json::nullValue).asInt();
 }
 
 long BaseAction::getLongAttribute(std::string attribute) const
 {
-  return response_object_.get(attribute, Json::nullValue).asInt64();
+  return response_object_->get(attribute, Json::nullValue).asInt64();
 }
 
 double BaseAction::getDoubleAttribute(std::string attribute) const
 {
-  return response_object_.get(attribute, Json::nullValue).asDouble();
+  return response_object_->get(attribute, Json::nullValue).asDouble();
 }
 
 struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 {
-  std::string date_time_string = response_object_.get(attribute, Json::nullValue).asString();
+  std::string date_time_string = response_object_->get(attribute, Json::nullValue).asString();
   struct tm datetime;
   strptime(date_time_string.c_str(), PARSE_DATE_FORMAT.c_str(), &datetime);
   return datetime;
@@ -146,7 +152,7 @@ struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 
 std::vector<std::string> BaseAction::getStringArrayAttribute(std::string attribute) const
 {
-  Json::Value array = response_object_.get(attribute, Json::nullValue);
+  Json::Value array = response_object_->get(attribute, Json::nullValue);
   std::vector<std::string> values;
   for (uint i = 0; i < array.size(); i++) {
     values.push_back(array[i].asString());
