@@ -1,5 +1,11 @@
 SET(ACTION_TEST_SOURCES
+    Actions/PiVersionsActionTest.cpp
     Actions/InitActionTest.cpp
+    Actions/SftpActionTest.cpp
+    Actions/PrepActionTest.cpp
+    Actions/RunActionTest.cpp
+    Actions/StatusActionTest.cpp
+    Actions/DeleteActionTest.cpp
 )
 
 SET(SOURCES
