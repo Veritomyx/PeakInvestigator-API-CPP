@@ -42,7 +42,7 @@
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string BaseAction::VERSION_OF_API("3.4");
-const std::string BaseAction::DATE_FORMAT("yyyy-MM-dd HH:mm:ss");
+const std::string BaseAction::PARSE_DATE_FORMAT("%Y-%m-%d %H:%M:%S");
 
 BaseAction::BaseAction(std::string user, std::string code, std::string action)
 {
@@ -140,7 +140,7 @@ struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 {
   std::string date_time_string = response_object_.get(attribute, Json::nullValue).asString();
   struct tm datetime;
-  strptime(date_time_string.c_str(), DATE_FORMAT.c_str(), &datetime);
+  strptime(date_time_string.c_str(), PARSE_DATE_FORMAT.c_str(), &datetime);
   return datetime;
 }
 

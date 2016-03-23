@@ -51,13 +51,13 @@ DeleteAction::DeleteAction(std::string user, std::string code, std::string jobID
 std::string DeleteAction::buildQuery() const
 {
   std::string query = BaseAction::buildQuery();
-  query.append("Job="); query.append(action_);
+  query.append("&Job="); query.append(jobID_);
   return query;
 }
 
 void DeleteAction::preCheck()
 {
-  if (!isReady(action_))
+  if (!isReady("DELETE"))
   {
     throw std::runtime_error("Response has not been set.");
   }

@@ -51,7 +51,6 @@ namespace Veritomyx
     class DeleteAction : public BaseAction
     {
       private:
-        static const std::string action_;
         std::string jobID_;
 
       public:

@@ -64,7 +64,7 @@ namespace Veritomyx
 
       public:
         const static std::string VERSION_OF_API;
-        const static std::string DATE_FORMAT;
+        const static std::string PARSE_DATE_FORMAT;
 
         BaseAction(std::string user, std::string code, std::string action);
 

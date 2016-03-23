@@ -11,6 +11,9 @@ TEST(InitActionTest, QueryString)
                 action.buildQuery().c_str());
 }
 
+// "{\"Action\":\"INIT\", \"Job\":\"V-504.1551\", \"ID\":504, \"Funds\":115.01, \"EstimatedCost\":[{\"Instrument\":\"TOF\", \"RTO\":\"RTO-24\", \"Cost\":27.60},
+//                                                                                                 {\"Instrument\":\"Orbitrap\", \"RTO\":\"RTO-24\", \"Cost\":36.22},
+//                                                                                                 {\"Instrument\":\"IonTrap\", \"RTO\":\"RTO-24\", \"Cost\":32.59}]}"
 TEST(InitActionTest, ExampleResponse)
 {
   InitAction action("username", "password", 1234, "1.2", 10, 12345, 100, 2000);
