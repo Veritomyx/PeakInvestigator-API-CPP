@@ -100,12 +100,12 @@ std::string PrepAction::getMStype() {
 
 int PrepAction::getScanCount() {
   preCheck();
-  return static_cast<int>(getLongAttribute("ScanCount"));
+  return getIntAttribute("ScanCount");
 }
 
 int PrepAction::getMaxPoints() {
   preCheck();
-  return static_cast<int>(getLongAttribute("MaxPoints"));
+  return getIntAttribute("MaxPoints");
 }
 
 int PrepAction::getMinMass() {
