@@ -88,6 +88,16 @@ PrepAction::Status PrepAction::getStatus() {
   throw std::runtime_error("Invalid status received.");
 }
 
+std::string PrepAction::getPercentComplete() {
+  preCheck();
+  return getStringAttribute("PercentComplete");
+}
+
+std::string PrepAction::getMStype() {
+  preCheck();
+  return getStringAttribute("MSType");
+}
+
 int PrepAction::getScanCount() {
   preCheck();
   return static_cast<int>(getLongAttribute("ScanCount"));
@@ -98,14 +108,14 @@ int PrepAction::getMaxPoints() {
   return static_cast<int>(getLongAttribute("MaxPoints"));
 }
 
-std::string PrepAction::getPercentComplete() {
+int PrepAction::getMinMass() {
   preCheck();
-  return getStringAttribute("PercentComplete");
+  return getIntAttribute("MinMass");
 }
 
-std::string PrepAction::getMStype() {
+int PrepAction::getMaxMass() {
   preCheck();
-  return getStringAttribute("MSType");
+  return getIntAttribute("MaxMass");
 }
 
 std::string PrepAction::getErrorMessage() {

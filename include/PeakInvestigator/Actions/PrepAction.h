@@ -71,13 +71,17 @@ namespace Veritomyx
 
         Status getStatus();
 
+        std::string getPercentComplete();
+
+        std::string getMStype();
+
         int getScanCount();
 
         int getMaxPoints();
 
-        std::string getPercentComplete();
+        int getMinMass();
 
-        std::string getMStype();
+        int getMaxMass();
 
         std::string getErrorMessage();
 
