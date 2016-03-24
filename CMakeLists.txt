@@ -4,5 +4,7 @@ PROJECT(PeakInvestigator-API-CPP)
 FIND_PACKAGE(CURL)
 
 ADD_SUBDIRECTORY(PeakInvestigator)
+ADD_SUBDIRECTORY(thirdparty)
+
 ADD_SUBDIRECTORY(test)
 

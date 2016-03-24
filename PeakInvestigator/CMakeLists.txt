@@ -20,18 +20,11 @@ SET(PEAKINVESTIGATOR_HEADERS
     Actions/DeleteAction.h
 )
 
-SET(JSONCPP_SOURCES
-    jsoncpp/jsoncpp.cpp
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp)
+
+ADD_LIBRARY(PeakInvestigator STATIC
+                ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS}
 )
 
-SET(JSONCPP_HEADERS
-    jsoncpp/json/json-forwards.h
-    jsoncpp/json/json.h
-)
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/PeakInvestigator/jsoncpp)
-
-ADD_LIBRARY(PeakInvestigatorSaaS STATIC 
-                ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS} ${JSONCPP_SOURCES} ${JSONCPP_HEADERS}
-)
+TARGET_LINK_LIBRARIES(PeakInvestigator PRIVATE jsoncpp)
 

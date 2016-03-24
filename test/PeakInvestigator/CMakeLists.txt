@@ -12,9 +12,9 @@ SET(SOURCES
     main.cpp
 )
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/PeakInvestigator/jsoncpp)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 ADD_EXECUTABLE(PeakInvestigatorTest ${ACTION_TEST_SOURCES} ${SOURCES})
 
-TARGET_LINK_LIBRARIES(PeakInvestigatorTest PeakInvestigatorSaaS libgtest)
+TARGET_LINK_LIBRARIES(PeakInvestigatorTest PeakInvestigator libgtest)
 
 ADD_TEST(NAME PeakInvestigatorTest COMMAND PeakInvestigatorTest)
