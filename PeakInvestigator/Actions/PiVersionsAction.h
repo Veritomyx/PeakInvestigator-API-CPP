@@ -40,6 +40,7 @@
 #include <string>
 #include <vector>
 
+#include "PeakInvestigatorSaaS_export.h"
 #include <PeakInvestigator/Actions/BaseAction.h>
 
 namespace Veritomyx
@@ -48,7 +49,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class PiVersionsAction : public BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT PiVersionsAction : public BaseAction
     {
 
       public:

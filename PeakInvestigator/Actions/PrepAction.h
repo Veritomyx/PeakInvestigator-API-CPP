@@ -39,6 +39,7 @@
 
 #include <string>
 
+#include "PeakInvestigatorSaaS_export.h"
 #include "BaseAction.h"
 
 namespace Veritomyx
@@ -47,7 +48,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class PrepAction : public BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT PrepAction : public BaseAction
     {
       private:
         int projectID_;

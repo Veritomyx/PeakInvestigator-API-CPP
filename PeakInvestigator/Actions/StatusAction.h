@@ -37,6 +37,7 @@
 #ifndef STATUS_ACTION_H
 #define STATUS_ACTION_H
 
+#include "PeakInvestigatorSaaS_export.h"
 #include "BaseAction.h"
 
 namespace Veritomyx
@@ -45,7 +46,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class StatusAction : public BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT StatusAction : public BaseAction
     {
       private:
         static const std::string action;

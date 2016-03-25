@@ -39,6 +39,8 @@
 
 #include <string>
 
+#include "PeakInvestigatorSaaS_export.h"
+
 namespace Veritomyx
 {
   namespace PeakInvestigator
@@ -47,7 +49,7 @@ namespace Veritomyx
     class BaseAction;
     class SftpAction;
 
-    class PeakInvestigatorSaaS
+    class PEAKINVESTIGATORSAAS_EXPORT PeakInvestigatorSaaS
     {
       public:
 

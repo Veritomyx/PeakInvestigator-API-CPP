@@ -40,6 +40,7 @@
 #include <string>
 #include <ctime>
 
+#include "PeakInvestigatorSaaS_export.h"
 #include <PeakInvestigator/Actions/BaseAction.h>
 
 namespace Veritomyx
@@ -48,7 +49,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class DeleteAction : public BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT DeleteAction : public BaseAction
     {
       private:
         std::string jobID_;

@@ -41,6 +41,7 @@
 #include <map>
 #include <list>
 
+#include "PeakInvestigatorSaaS_export.h"
 #include <PeakInvestigator/Actions/BaseAction.h>
 
 namespace Veritomyx
@@ -49,7 +50,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class ResponseTimeCosts : public std::map<std::string, double>
+    class PEAKINVESTIGATORSAAS_EXPORT ResponseTimeCosts : public std::map<std::string, double>
     {
 
       public:
@@ -58,13 +59,13 @@ namespace Veritomyx
         double getCost(std::string responseTimeObjective) const;
     };
 
-    class EstimatedCosts : public std::map<std::string, ResponseTimeCosts>
+    class PEAKINVESTIGATORSAAS_EXPORT EstimatedCosts : public std::map<std::string, ResponseTimeCosts>
     {
       public:
         ResponseTimeCosts forInstrument(std::string) const;
     };
 
-    class InitAction : public BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT InitAction : public BaseAction
     {
       private:
 

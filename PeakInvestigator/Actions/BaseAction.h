@@ -43,6 +43,8 @@
 #include <string>
 #include <vector>
 
+#include "PeakInvestigatorSaaS_export.h"
+
 namespace Json
 {
   class Value;
@@ -54,7 +56,7 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
-    class BaseAction
+    class PEAKINVESTIGATORSAAS_EXPORT BaseAction
     {
       private:
 
