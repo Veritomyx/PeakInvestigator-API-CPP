@@ -1,4 +1,5 @@
 SET(PEAKINVESTIGATOR_SOURCES
+    PeakInvestigatorSaaS.cpp
     Actions/BaseAction.cpp
     Actions/PiVersionsAction.cpp
     Actions/InitAction.cpp
@@ -10,6 +11,7 @@ SET(PEAKINVESTIGATOR_SOURCES
 )
 
 SET(PEAKINVESTIGATOR_HEADERS
+    PeakInvestigatorSaaS.h
     Actions/BaseAction.h
     Actions/PiVersionsAction.h
     Actions/InitAction.h
@@ -20,11 +22,11 @@ SET(PEAKINVESTIGATOR_HEADERS
     Actions/DeleteAction.h
 )
 
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp ${CURL_INCLUDE_DIRS})
 
-ADD_LIBRARY(PeakInvestigator STATIC
+ADD_LIBRARY(PeakInvestigatorSaaS STATIC
                 ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS}
 )
 
-TARGET_LINK_LIBRARIES(PeakInvestigator PRIVATE jsoncpp)
+TARGET_LINK_LIBRARIES(PeakInvestigatorSaaS PRIVATE jsoncpp ${CURL_LIBRARIES})
 
