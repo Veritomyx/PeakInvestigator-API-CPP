@@ -41,7 +41,7 @@
 #include <ctime>
 
 #include "PeakInvestigatorSaaS_export.h"
-#include <PeakInvestigator/Actions/BaseAction.h>
+#include "BaseAction.h"
 
 namespace Veritomyx
 {

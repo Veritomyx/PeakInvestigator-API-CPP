@@ -36,7 +36,7 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/PrepAction.h>
+#include "PrepAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

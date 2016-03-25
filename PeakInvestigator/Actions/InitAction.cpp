@@ -38,7 +38,7 @@
 #include <iostream>
 
 #include <json/json.h>
-#include <PeakInvestigator/Actions/InitAction.h>
+#include "InitAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

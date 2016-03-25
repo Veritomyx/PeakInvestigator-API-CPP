@@ -36,7 +36,7 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/SftpAction.h>
+#include "SftpAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

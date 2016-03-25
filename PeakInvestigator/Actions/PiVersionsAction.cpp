@@ -36,7 +36,7 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/PiVersionsAction.h>
+#include "PiVersionsAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

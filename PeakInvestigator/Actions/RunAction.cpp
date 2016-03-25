@@ -36,7 +36,7 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/RunAction.h>
+#include "RunAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

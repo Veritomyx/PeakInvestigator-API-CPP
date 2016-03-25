@@ -36,8 +36,9 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/BaseAction.h>
 #include <json/json.h>
+
+#include "BaseAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 

@@ -36,7 +36,7 @@
 
 #include <stdexcept>
 
-#include <PeakInvestigator/Actions/DeleteAction.h>
+#include "DeleteAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 
