@@ -38,10 +38,28 @@
 #include <stdexcept>
 
 #include <curl/curl.h>
+#include <libssh2.h>
+#include <libssh2_sftp.h>
 
+#include "PeakInvestigatorSaaS_config.h"
 #include "PeakInvestigatorSaaS.h"
 #include "Actions/BaseAction.h"
 #include "Actions/SftpAction.h"
+
+// states of connection for SFTP
+#define LIBRARY_UNINITIALIZED     0
+#define LIBRARY_INITIALIZED       1
+#define SOCKET_CONNECTED          3
+#define SSH_SESSION_INITIALIZED   7
+#define SSH_SESSION_ESTABLISHED   15
+#define SFTP_SESSION_ESTABLISHED  31
+
+// state modification defines
+#define INITIALIZE_LIBRARY        1
+#define CONNECT_SOCKET            2
+#define INITIALIZE_SSH_SESSION    4
+#define ESTABLISH_SSH_SESSION     8
+#define ESTABLISH_SFTP_SESSION    16
 
 using namespace Veritomyx::PeakInvestigator;
 
@@ -60,11 +78,22 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
   agent_ = agent;
 
   curl_global_init(CURL_GLOBAL_ALL);
+
+  socket_ = 0;
+  ssh_session_ = NULL;
+  sftp_session_ = NULL;
+
+  sftpState_ = LIBRARY_UNINITIALIZED;
+  if (libssh2_init(0) == 0)
+  {
+    sftpState_ |= INITIALIZE_LIBRARY;
+  }
 }
 
 PeakInvestigatorSaaS::~PeakInvestigatorSaaS()
 {
   curl_global_cleanup();
+  libssh2_exit();
 }
 
 std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)

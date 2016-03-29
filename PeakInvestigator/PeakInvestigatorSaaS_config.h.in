@@ -1,0 +1,5 @@
+#cmakedefine HAVE_WINSOCK2_H
+#cmakedefine HAVE_SYS_SOCKET_H
+#cmakedefine HAVE_NETINET_IN_H
+#cmakedefine HAVE_UNISTD_H
+#cmakedefine HAVE_ARPA_INET_H

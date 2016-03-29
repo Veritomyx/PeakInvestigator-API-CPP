@@ -41,6 +41,9 @@
 
 #include "PeakInvestigatorSaaS_export.h"
 
+struct _LIBSSH2_SESSION;
+struct _LIBSSH2_SFTP;
+
 namespace Veritomyx
 {
   namespace PeakInvestigator
@@ -65,6 +68,13 @@ namespace Veritomyx
         std::string hostname_;
         std::string path_;
         std::string agent_;
+
+        int sftpState_;
+        int socket_;
+        struct addrinfo* hostInfo_;
+
+        _LIBSSH2_SESSION* ssh_session_;
+        _LIBSSH2_SFTP* sftp_session_;
     };
 
   }
