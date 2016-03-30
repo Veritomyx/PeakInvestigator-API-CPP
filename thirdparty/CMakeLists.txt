@@ -1,3 +1,2 @@
 ADD_SUBDIRECTORY(jsoncpp)
-ADD_SUBDIRECTORY(libssh2)
 
