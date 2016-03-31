@@ -46,13 +46,13 @@ using namespace Veritomyx::PeakInvestigator;
 TEST(PeakInvestigatorSaaS, executeAction)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
-  PiVersionsAction action(TEST_USERNAME, TEST_PASSWORD);
+  PiVersionsAction action(PI_USERNAME, PI_PASSWORD);
 
   std::string response = service.executeAction(&action);
   action.processResponse(response);
 
   ASSERT_TRUE(action.isReady("PI_VERSIONS"));
-  if(TEST_USERNAME == "" || TEST_PASSWORD == "")
+  if(PI_USERNAME == "" || PI_PASSWORD == "")
   {
     std::cout << "Testing without username or password specified." << std::endl;
     ASSERT_TRUE(action.hasError());
@@ -63,16 +63,38 @@ TEST(PeakInvestigatorSaaS, executeAction)
   }
 }
 
-TEST(PeakInvestigatorSaaS, uploadFile)
+class MockSftpAction : public SftpAction
+{
+  public:
+    MockSftpAction(std::string hostname,
+                   std::string sftpUsername,
+                   std::string sftpPassword,
+                   int port) : SftpAction("", "", 0)
+    {
+      hostname_ = hostname;
+      username_ = sftpUsername;
+      password_ = sftpPassword;
+      port_ = port;
+    }
+
+    std::string getHost() { return hostname_; }
+    std::string getSftpUsername() { return username_; }
+    std::string getSftpPassword() { return password_; }
+    int getPort() { return port_; }
+    bool preCheck() { return true; }
+
+  private:
+    std::string hostname_;
+    std::string username_;
+    std::string password_;
+    int port_;
+};
+
+TEST(PeakInvestigatorSaaS, uploadFile_OK)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
-  SftpAction action(TEST_USERNAME, TEST_PASSWORD, TEST_PROJECT);
-
-  std::string response = service.executeAction(&action);
-  action.processResponse(response);
-
-  ASSERT_TRUE(action.isReady("SFTP"));
-  ASSERT_FALSE(action.hasError());
+  MockSftpAction action("peakinvestigator.veritomyx.com", SFTP_USERNAME,
+                           SFTP_PASSWORD, SFTP_PORT);
 
   service.uploadFile(action, "test.tar", "test.tar");
 }
