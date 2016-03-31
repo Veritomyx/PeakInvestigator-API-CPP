@@ -30,9 +30,14 @@ ADD_DEFINITIONS(
     -DSFTP_PORT=${SFTP_PORT}
 )
 
-INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR}/PeakInvestigator)
+INCLUDE_DIRECTORIES(
+    ${PROJECT_SOURCE_DIR}
+    ${PROJECT_BINARY_DIR}/PeakInvestigator
+    ${PROJECT_BINARY_DIR}/gtest/include
+)
+
 ADD_EXECUTABLE(PeakInvestigatorTest ${ACTION_TEST_SOURCES} ${SOURCES})
 
-TARGET_LINK_LIBRARIES(PeakInvestigatorTest PeakInvestigatorSaaS libgtest)
+TARGET_LINK_LIBRARIES(PeakInvestigatorTest PeakInvestigatorSaaS libgtest libgmock)
 
 ADD_TEST(NAME PeakInvestigatorTest COMMAND PeakInvestigatorTest)

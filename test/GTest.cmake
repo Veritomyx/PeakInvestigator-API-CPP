@@ -9,10 +9,10 @@ include(ExternalProject)
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
-    URL https://github.com/google/googletest/archive/release-1.7.0.zip
+    GIT_REPOSITORY https://github.com/google/googletest.git
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     # Disable install step
-    INSTALL_COMMAND ""
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/gtest
 )
 
 # Create a libgtest target to be used as a dependency by test programs
@@ -20,12 +20,17 @@ add_library(libgtest IMPORTED STATIC GLOBAL)
 add_dependencies(libgtest gtest)
 
 # Set gtest properties
-ExternalProject_Get_Property(gtest source_dir binary_dir)
 set_target_properties(libgtest PROPERTIES
-    "IMPORTED_LOCATION" "${binary_dir}/libgtest.a"
+    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
-#    "INTERFACE_INCLUDE_DIRECTORIES" "${source_dir}/include"
 )
-# I couldn't make it work with INTERFACE_INCLUDE_DIRECTORIES
-include_directories("${source_dir}/include")
 
+# Create a libgtest target to be used as a dependency by test programs
+add_library(libgmock IMPORTED STATIC GLOBAL)
+add_dependencies(libgmock gtest)
+
+# Set gtest properties
+set_target_properties(libgmock PROPERTIES
+    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/libgmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+)
