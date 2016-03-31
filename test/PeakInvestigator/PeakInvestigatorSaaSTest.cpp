@@ -39,13 +39,15 @@
 #include <PeakInvestigator/Actions/PiVersionsAction.h>
 #include <PeakInvestigator/Actions/SftpAction.h>
 
+#include "PeakInvestigatorSaaSTest_config.h"
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
 using namespace Veritomyx::PeakInvestigator;
 using ::testing::Return;
 
-TEST(PeakInvestigatorSaaS, executeAction)
+#ifdef TEST_PEAKINVESTIGATOR_WEB
+TEST(PeakInvestigatorSaaS, executeAction_Ok)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
   PiVersionsAction action(PI_USERNAME, PI_PASSWORD);
@@ -54,15 +56,21 @@ TEST(PeakInvestigatorSaaS, executeAction)
   action.processResponse(response);
 
   ASSERT_TRUE(action.isReady("PI_VERSIONS"));
-  if(PI_USERNAME == "" || PI_PASSWORD == "")
-  {
-    std::cout << "Testing without username or password specified." << std::endl;
-    ASSERT_TRUE(action.hasError());
-  }
-  else
-  {
-    ASSERT_FALSE(action.hasError());
-  }
+  ASSERT_FALSE(action.hasError());
+}
+#endif
+
+TEST(PeakInvestigatorSaas, executeAction_BadCredentials)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  PiVersionsAction action("username", "password");
+
+  std::string response = service.executeAction(&action);
+  action.processResponse(response);
+
+  ASSERT_TRUE(action.isReady("PI_VERSIONS"));
+  ASSERT_TRUE(action.hasError());
+  ASSERT_EQ(3, action.getErrorCode());
 }
 
 class MockSftpAction : public SftpAction
@@ -77,6 +85,7 @@ public:
     MOCK_METHOD0(getSftpPassword, std::string());
 };
 
+#ifdef TEST_PEAKINVESTIGATOR_SFTP
 TEST(PeakInvestigatorSaaS, uploadFile_OK)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
@@ -93,6 +102,7 @@ TEST(PeakInvestigatorSaaS, uploadFile_OK)
 
   ASSERT_NO_THROW(service.uploadFile(action, "test.tar", "test.tar"));
 }
+#endif
 
 TEST(PeakInvestigatorSaaS, uploadFile_BadHost)
 {
@@ -101,12 +111,8 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadHost)
 
   EXPECT_CALL(action, getHost())
       .WillOnce(Return("peakinvestigator"));
-  EXPECT_CALL(action, getSftpUsername())
-      .WillRepeatedly(Return(SFTP_USERNAME));
-  EXPECT_CALL(action, getSftpPassword())
-      .WillRepeatedly(Return(SFTP_PASSWORD));
   EXPECT_CALL(action, getPort())
-      .WillOnce(Return(SFTP_PORT));
+      .WillOnce(Return(22));
 
   ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
                std::runtime_error);
@@ -119,10 +125,6 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadPort)
 
   EXPECT_CALL(action, getHost())
       .WillOnce(Return("peakinvestigator.veritomyx.com"));
-  EXPECT_CALL(action, getSftpUsername())
-      .WillRepeatedly(Return(SFTP_USERNAME));
-  EXPECT_CALL(action, getSftpPassword())
-      .WillRepeatedly(Return(SFTP_PASSWORD));
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(22));
 
@@ -130,7 +132,8 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadPort)
                std::runtime_error);
 }
 
-TEST(PeakInvestigatorSaaS, uploadFile_BadUsername)
+#ifdef TEST_PEAKINVESTIGATOR_SFTP
+TEST(PeakInvestigatorSaaS, uploadFile_BadCredentials)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
   MockSftpAction action;
@@ -140,24 +143,6 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadUsername)
   EXPECT_CALL(action, getSftpUsername())
       .WillRepeatedly(Return("BadUsername"));
   EXPECT_CALL(action, getSftpPassword())
-      .WillRepeatedly(Return(SFTP_PASSWORD));
-  EXPECT_CALL(action, getPort())
-      .WillOnce(Return(SFTP_PORT));
-
-  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
-               std::runtime_error);
-}
-
-TEST(PeakInvestigatorSaaS, uploadFile_BadPassword)
-{
-  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
-  MockSftpAction action;
-
-  EXPECT_CALL(action, getHost())
-      .WillOnce(Return("peakinvestigator.veritomyx.com"));
-  EXPECT_CALL(action, getSftpUsername())
-      .WillRepeatedly(Return(SFTP_USERNAME));
-  EXPECT_CALL(action, getSftpPassword())
       .WillRepeatedly(Return("BadPassword"));
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
@@ -165,3 +150,4 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadPassword)
   ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
                std::runtime_error);
 }
+#endif
