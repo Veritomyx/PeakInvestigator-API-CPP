@@ -61,17 +61,28 @@ namespace Veritomyx
 
         std::string executeAction(BaseAction* action);
 
-        void uploadFile(SftpAction* action, std::string localFilename, std::string remoteFilename);
-        void downloadFile(SftpAction* action, std::string remoteFilename, std::string localFilename);
+        void uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename);
+        void downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename);
 
       private:
+
+        void establishSSHSession_(SftpAction &action);
+        void confirmSSHServerIdentity_();
+        void authenticateUser_(SftpAction &action);
+        void establishSFTPSession_();
+        void disconnect_();
+
+        int getConnectedSocket(const char* host, const char* port);
+
+        std::ostream* logger_;
+
         std::string hostname_;
         std::string path_;
         std::string agent_;
 
-        int sftpState_;
+        int state_;
         int socket_;
-        struct addrinfo* hostInfo_;
+        struct addrinfo* host_info_;
 
         _LIBSSH2_SESSION* ssh_session_;
         _LIBSSH2_SFTP* sftp_session_;

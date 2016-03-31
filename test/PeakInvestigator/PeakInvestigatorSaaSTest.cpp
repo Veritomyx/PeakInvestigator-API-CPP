@@ -37,6 +37,7 @@
 #include <string>
 #include <PeakInvestigator/PeakInvestigatorSaaS.h>
 #include <PeakInvestigator/Actions/PiVersionsAction.h>
+#include <PeakInvestigator/Actions/SftpAction.h>
 
 #include "gtest/gtest.h"
 
@@ -60,4 +61,18 @@ TEST(PeakInvestigatorSaaS, executeAction)
   {
     ASSERT_FALSE(action.hasError());
   }
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  SftpAction action(TEST_USERNAME, TEST_PASSWORD, TEST_PROJECT);
+
+  std::string response = service.executeAction(&action);
+  action.processResponse(response);
+
+  ASSERT_TRUE(action.isReady("SFTP"));
+  ASSERT_FALSE(action.hasError());
+
+  service.uploadFile(action, "test.tar", "test.tar");
 }

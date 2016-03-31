@@ -42,6 +42,35 @@
 #include <libssh2_sftp.h>
 
 #include "PeakInvestigatorSaaS_config.h"
+
+#ifdef HAVE_WINSOCK2_H
+#include <winsock2.h>
+#endif
+
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
+
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#endif
+
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
+#ifdef HAVE_NETDB_H
+#include <netdb.h>
+#endif
+
 #include "PeakInvestigatorSaaS.h"
 #include "Actions/BaseAction.h"
 #include "Actions/SftpAction.h"
@@ -61,6 +90,8 @@
 #define ESTABLISH_SSH_SESSION     8
 #define ESTABLISH_SFTP_SESSION    16
 
+#define LOG *logger_
+
 using namespace Veritomyx::PeakInvestigator;
 
 size_t process_response(void* contents, size_t size, size_t nmemb, void* target)
@@ -77,17 +108,21 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
   path_ = path;
   agent_ = agent;
 
+  logger_ = &std::cout;
+
   curl_global_init(CURL_GLOBAL_ALL);
 
   socket_ = 0;
   ssh_session_ = NULL;
   sftp_session_ = NULL;
 
-  sftpState_ = LIBRARY_UNINITIALIZED;
-  if (libssh2_init(0) == 0)
+  state_ = LIBRARY_UNINITIALIZED;
+  if (libssh2_init(0) != 0)
   {
-    sftpState_ |= INITIALIZE_LIBRARY;
+    throw std::runtime_error("Unable to initialize SSH library.");
   }
+
+  state_ |= INITIALIZE_LIBRARY;
 }
 
 PeakInvestigatorSaaS::~PeakInvestigatorSaaS()
@@ -132,12 +167,124 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
   return response;
 }
 
-void PeakInvestigatorSaaS::uploadFile(SftpAction* action, std::string localFilename, std::string remoteFilename)
+void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename)
+{
+  establishSSHSession_(action);
+  authenticateUser_(action);
+  establishSFTPSession_();
+
+  disconnect_();
+}
+
+void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename)
 {
 
 }
 
-void PeakInvestigatorSaaS::downloadFile(SftpAction* action, std::string remoteFilename, std::string localFilename)
+void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
+{
+  LOG << "Trying to establish SSH session." << std::endl;
+
+  socket_ = getConnectedSocket(action.getHost().c_str(),
+                                std::to_string(action.getPort()).c_str());
+
+  ssh_session_ = libssh2_session_init();
+  if(!ssh_session_)
+  {
+    throw std::runtime_error("Unable to initalize SSH session.");
+  }
+
+  state_ |= INITIALIZE_SSH_SESSION;
+
+  libssh2_session_set_blocking(ssh_session_, 1);
+  int retval = libssh2_session_handshake(ssh_session_, socket_);
+  if (retval != 0)
+  {
+    std::string error = "SSH session handshake failed: " + std::to_string(retval);
+    throw std::runtime_error(error);
+  }
+
+  state_ |= ESTABLISH_SSH_SESSION;
+}
+
+void PeakInvestigatorSaaS::confirmSSHServerIdentity_()
 {
 
+}
+
+void PeakInvestigatorSaaS::authenticateUser_(SftpAction& action)
+{
+  int retval = libssh2_userauth_password(ssh_session_, action.getSftpUsername().c_str(),
+                                         action.getSftpPassword().c_str());
+  if (retval != 0)
+  {
+    throw std::runtime_error("SSH username and/or password incorrect.");
+  }
+}
+
+void PeakInvestigatorSaaS::establishSFTPSession_()
+{
+  sftp_session_ = libssh2_sftp_init(ssh_session_);
+  if (!sftp_session_)
+  {
+    throw std::runtime_error("Unable to start SFTP session.");
+  }
+
+  state_ |= ESTABLISH_SFTP_SESSION;
+}
+
+void PeakInvestigatorSaaS::disconnect_()
+{
+  LOG << "Disconnecting. The current state is: " << state_ << std::endl;
+  switch(state_)
+  {
+  case SFTP_SESSION_ESTABLISHED:
+    libssh2_sftp_shutdown(sftp_session_);
+    state_ ^= ESTABLISH_SFTP_SESSION;
+  case SSH_SESSION_ESTABLISHED:
+    libssh2_session_disconnect(ssh_session_, "Disconnecting.");
+    state_ ^= ESTABLISH_SSH_SESSION;
+  case SSH_SESSION_INITIALIZED:
+    libssh2_session_free(ssh_session_);
+    state_ ^= INITIALIZE_SSH_SESSION;
+  case SOCKET_CONNECTED:
+    close(socket_);
+    freeaddrinfo(host_info_);
+    state_ ^= CONNECT_SOCKET;
+  case LIBRARY_INITIALIZED:
+    break;
+  default:
+    LOG << "Problem in disconnect. State: " << state_ << std::endl;
+  }
+
+}
+
+int PeakInvestigatorSaaS::getConnectedSocket(const char* host, const char* port)
+{
+  // setup hints to for host lookup
+  struct addrinfo hints;
+  memset(&hints, 0, sizeof(hints));
+  hints.ai_socktype = SOCK_STREAM;
+
+  int retval = getaddrinfo(host, port, &hints, &host_info_);
+  if (retval != 0)
+  {
+    std::string error = "Unable to resolve host ";
+    error.append(host);
+    error.append(" : ");
+    error.append(std::to_string(retval));
+    throw std::runtime_error(error);
+  }
+
+  int sock = socket(host_info_->ai_family, host_info_->ai_socktype, host_info_->ai_protocol);
+  retval = connect(sock, host_info_->ai_addr, host_info_->ai_addrlen);
+
+  if (retval != 0)
+  {
+    std::string error = "Unable to connect socket.";
+    throw std::runtime_error(error);
+  }
+
+  state_ |= CONNECT_SOCKET;
+  return sock;
 }
