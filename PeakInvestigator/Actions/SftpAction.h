@@ -62,15 +62,15 @@ namespace Veritomyx
 
         void preCheck();
 
-        std::string getHost();
+        virtual std::string getHost();
 
-        int getPort();
+        virtual int getPort();
 
-        std::string getDirectory();
+        virtual std::string getDirectory();
 
-        std::string getSftpUsername();
+        virtual std::string getSftpUsername();
 
-        std::string getSftpPassword();
+        virtual std::string getSftpPassword();
 
         std::string getErrorMessage();
 
