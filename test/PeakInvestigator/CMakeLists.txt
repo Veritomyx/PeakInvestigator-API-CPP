@@ -1,5 +1,4 @@
 SET(ACTION_TEST_SOURCES
-    PeakInvestigatorSaaSTest.cpp
     Actions/PiVersionsActionTest.cpp
     Actions/InitActionTest.cpp
     Actions/SftpActionTest.cpp
@@ -10,7 +9,7 @@ SET(ACTION_TEST_SOURCES
 )
 
 SET(SOURCES
-    main.cpp
+    PeakInvestigatorSaaSTest.cpp
 )
 
 SET(PEAKINVESTIGATOR_USERNAME "" CACHE STRING "Specify a valid username for testing PeakInvestigatorSaaS")
@@ -36,8 +35,10 @@ INCLUDE_DIRECTORIES(
     ${PROJECT_BINARY_DIR}/gtest/include
 )
 
-ADD_EXECUTABLE(PeakInvestigatorTest ${ACTION_TEST_SOURCES} ${SOURCES})
+ADD_EXECUTABLE(PeakInvestigatorActionsTest ${ACTION_TEST_SOURCES} main.cpp)
+TARGET_LINK_LIBRARIES(PeakInvestigatorActionsTest PeakInvestigatorSaaS libgtest libgmock)
+ADD_TEST(NAME PeakInvestigatorActionsTest COMMAND PeakInvestigatorActionsTest)
 
-TARGET_LINK_LIBRARIES(PeakInvestigatorTest PeakInvestigatorSaaS libgtest libgmock)
-
-ADD_TEST(NAME PeakInvestigatorTest COMMAND PeakInvestigatorTest)
+ADD_EXECUTABLE(PeakInvestigatorSaaSTest ${SOURCES} main.cpp)
+TARGET_LINK_LIBRARIES(PeakInvestigatorSaaSTest PeakInvestigatorSaaS libgtest libgmock)
+ADD_TEST(NAME PeakInvestigatorSaaSTest COMMAND PeakInvestigatorSaaSTest)
