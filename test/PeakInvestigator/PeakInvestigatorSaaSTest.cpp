@@ -40,8 +40,10 @@
 #include <PeakInvestigator/Actions/SftpAction.h>
 
 #include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 using namespace Veritomyx::PeakInvestigator;
+using ::testing::Return;
 
 TEST(PeakInvestigatorSaaS, executeAction)
 {
@@ -65,36 +67,101 @@ TEST(PeakInvestigatorSaaS, executeAction)
 
 class MockSftpAction : public SftpAction
 {
-  public:
-    MockSftpAction(std::string hostname,
-                   std::string sftpUsername,
-                   std::string sftpPassword,
-                   int port) : SftpAction("", "", 0)
-    {
-      hostname_ = hostname;
-      username_ = sftpUsername;
-      password_ = sftpPassword;
-      port_ = port;
-    }
+public:
+    MockSftpAction() : SftpAction("username", "password", 1234) {}
 
-    std::string getHost() { return hostname_; }
-    std::string getSftpUsername() { return username_; }
-    std::string getSftpPassword() { return password_; }
-    int getPort() { return port_; }
-    bool preCheck() { return true; }
-
-  private:
-    std::string hostname_;
-    std::string username_;
-    std::string password_;
-    int port_;
+    MOCK_METHOD0(getHost, std::string());
+    MOCK_METHOD0(getPort, int());
+    MOCK_METHOD0(getDirectory, std::string());
+    MOCK_METHOD0(getSftpUsername, std::string());
+    MOCK_METHOD0(getSftpPassword, std::string());
 };
 
 TEST(PeakInvestigatorSaaS, uploadFile_OK)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
-  MockSftpAction action("peakinvestigator.veritomyx.com", SFTP_USERNAME,
-                           SFTP_PASSWORD, SFTP_PORT);
+  MockSftpAction action;
 
-  service.uploadFile(action, "test.tar", "test.tar");
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+
+  ASSERT_NO_THROW(service.uploadFile(action, "test.tar", "test.tar"));
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile_BadHost)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+
+  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+               std::runtime_error);
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile_BadPort)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(22));
+
+  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+               std::runtime_error);
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile_BadUsername)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return("BadUsername"));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+
+  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+               std::runtime_error);
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile_BadPassword)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return("BadPassword"));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+
+  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+               std::runtime_error);
 }
