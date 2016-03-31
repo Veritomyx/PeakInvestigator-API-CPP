@@ -90,6 +90,7 @@
 #define ESTABLISH_SSH_SESSION     8
 #define ESTABLISH_SFTP_SESSION    16
 
+#define TIMEOUT 10000
 #define LOG *logger_
 
 using namespace Veritomyx::PeakInvestigator;
@@ -127,6 +128,7 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
 
 PeakInvestigatorSaaS::~PeakInvestigatorSaaS()
 {
+  disconnect_();
   curl_global_cleanup();
   libssh2_exit();
 }
@@ -196,6 +198,7 @@ void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
 
   state_ |= INITIALIZE_SSH_SESSION;
 
+  libssh2_session_set_timeout(ssh_session_, TIMEOUT);
   libssh2_session_set_blocking(ssh_session_, 1);
   int retval = libssh2_session_handshake(ssh_session_, socket_);
   if (retval != 0)
