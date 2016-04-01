@@ -211,7 +211,47 @@ void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilen
 
 void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename, AbstractProgress* progress)
 {
+  std::ofstream file(localFilename);
+  if(!file)
+  {
+    throw std::runtime_error("Unable to open local file: " + localFilename);
+  }
 
+  establishSSHSession_(action);
+  authenticateUser_(action);
+  establishSFTPSession_();
+
+  LIBSSH2_SFTP_HANDLE* sftp = getSftpHandle(sftp_session_, DOWNLOAD, remoteFilename.c_str());
+  if(!sftp)
+  {
+    file.close();
+    throw std::runtime_error("Unable to open remote file: " + remoteFilename);
+  }
+
+  if(progress)
+  {
+    LIBSSH2_SFTP_ATTRIBUTES attributes;
+    int retval = libssh2_sftp_fstat(sftp, &attributes);
+    if(retval != 0)
+    {
+      file.close();
+      libssh2_sftp_close_handle(sftp);
+      throw std::runtime_error("Problem getting stats about remote file: " + remoteFilename);
+    }
+    progress->initialize(attributes.filesize, "Downloading file from SFTP server...");
+  }
+
+  downloadFile_(file, sftp, progress);
+
+  if(progress)
+  {
+    progress->finish();
+  }
+
+  file.close();
+  libssh2_sftp_close_handle(sftp);
+
+  disconnect_();
 }
 
 void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
@@ -382,4 +422,42 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
 
   LOG << "Finished.\n";
 
+}
+
+void PeakInvestigatorSaaS::downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress)
+{
+  int read, transferred = 0;
+  char buffer[BUFFER_SIZE];
+
+  LOG << "Downloading file...\n";
+
+  do
+  {
+    int read = libssh2_sftp_read(sftp, buffer, BUFFER_SIZE);
+    if (read == 0)
+    {
+      break; // EOF
+    }
+    else if (read < 0)
+    {
+      std::string message = "Error while reading bytes from server: " + std::to_string(read);
+      throw std::runtime_error(message);
+    }
+
+    file.write(buffer, read);
+    if(!file.good())
+    {
+      std::string message = "Error while writing local file: " + std::to_string(read);
+      throw std::runtime_error(message);
+    }
+
+    transferred += read;
+    if(progress)
+    {
+      progress->setProgress(transferred);
+    }
+
+  } while(true);
+
+  LOG << "Finished.\n";
 }

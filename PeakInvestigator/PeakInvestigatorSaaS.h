@@ -80,7 +80,8 @@ namespace Veritomyx
         int getConnectedSocket(const char* host, const char* port);
         _LIBSSH2_SFTP_HANDLE* getSftpHandle(_LIBSSH2_SFTP* sftp_session, Direction direction, const char* filename);
 
-        void uploadFile_(std::ifstream& inputFile, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
+        void uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
+        void downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
 
         std::ostream* logger_;
 

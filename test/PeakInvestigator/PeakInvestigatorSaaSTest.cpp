@@ -46,6 +46,9 @@
 using namespace Veritomyx::PeakInvestigator;
 using ::testing::Return;
 
+#define LOCAL_FILE "localFile.txt"
+#define REMOTE_FILE "remoteFile.txt"
+
 #ifdef TEST_PEAKINVESTIGATOR_WEB
 TEST(PeakInvestigatorSaaS, executeAction_Ok)
 {
@@ -100,7 +103,24 @@ TEST(PeakInvestigatorSaaS, uploadFile_OK)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
 
-  ASSERT_NO_THROW(service.uploadFile(action, "test.tar", "test.tar"));
+  ASSERT_NO_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE));
+}
+
+TEST(PeakInvestigatorSaaS, downloadFile_OK)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+
+  ASSERT_NO_THROW(service.downloadFile(action, REMOTE_FILE, REMOTE_FILE));
 }
 #endif
 
@@ -114,7 +134,7 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadHost)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(22));
 
-  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+  ASSERT_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE),
                std::runtime_error);
 }
 
@@ -128,7 +148,7 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadPort)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(22));
 
-  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+  ASSERT_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE),
                std::runtime_error);
 }
 
@@ -147,7 +167,7 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadCredentials)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
 
-  ASSERT_THROW(service.uploadFile(action, "test.tar", "test.tar"),
+  ASSERT_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE),
                std::runtime_error);
 }
 #endif

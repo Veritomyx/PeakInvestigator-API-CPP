@@ -47,6 +47,16 @@ TEST(InitActionTest, QueryString)
                 action.buildQuery().c_str());
 }
 
+TEST(InitActionTest, QueryString_Pointer)
+{
+  BaseAction* action = new InitAction("username", "password", 1234, "1.2", 10, 12345, 100, 2000);
+
+  ASSERT_STREQ("Version=3.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&CalibrationCount=0",
+                action->buildQuery().c_str());
+
+  delete action;
+}
+
 // "{\"Action\":\"INIT\", \"Job\":\"V-504.1551\", \"ID\":504, \"Funds\":115.01, \"EstimatedCost\":[{\"Instrument\":\"TOF\", \"RTO\":\"RTO-24\", \"Cost\":27.60},
 //                                                                                                 {\"Instrument\":\"Orbitrap\", \"RTO\":\"RTO-24\", \"Cost\":36.22},
 //                                                                                                 {\"Instrument\":\"IonTrap\", \"RTO\":\"RTO-24\", \"Cost\":32.59}]}"
