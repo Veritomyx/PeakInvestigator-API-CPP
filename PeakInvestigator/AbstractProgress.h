@@ -52,8 +52,9 @@ namespace Veritomyx
     class PEAKINVESTIGATORSAAS_EXPORT AbstractProgress
     {
       public:
-        virtual void initialize(int count, std::string label) = 0;
-        virtual void setProgress(int count) = 0;
+        virtual ~AbstractProgress() {} ;
+        virtual void initialize(const int total, const std::string label) = 0;
+        virtual void setProgress(const int progress) = 0;
         virtual void finish() = 0;
     };
   }

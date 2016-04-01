@@ -36,6 +36,7 @@
 
 #include <string>
 #include <PeakInvestigator/PeakInvestigatorSaaS.h>
+#include <PeakInvestigator/AbstractProgress.h>
 #include <PeakInvestigator/Actions/PiVersionsAction.h>
 #include <PeakInvestigator/Actions/SftpAction.h>
 
@@ -88,10 +89,28 @@ public:
     MOCK_METHOD0(getSftpPassword, std::string());
 };
 
+class ProgressTracker : public AbstractProgress
+{
+  public:
+    ProgressTracker() {}
+    ~ProgressTracker() {}
+    void initialize(const int total, const std::string label) { total_ = total; }
+    void setProgress(const int progress) { progress_ = progress; }
+    void finish() {}
+
+    int getTotal() const { return total_; }
+    int getProgress() const { return progress_; }
+
+  private:
+    int total_;
+    int progress_;
+};
+
 #ifdef TEST_PEAKINVESTIGATOR_SFTP
 TEST(PeakInvestigatorSaaS, uploadFile_OK)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  ProgressTracker progress;
   MockSftpAction action;
 
   EXPECT_CALL(action, getHost())
@@ -103,12 +122,14 @@ TEST(PeakInvestigatorSaaS, uploadFile_OK)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
 
-  ASSERT_NO_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE));
+  ASSERT_NO_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE, &progress));
+  ASSERT_EQ(progress.getTotal(), progress.getProgress());
 }
 
 TEST(PeakInvestigatorSaaS, downloadFile_OK)
 {
   PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  ProgressTracker progress;
   MockSftpAction action;
 
   EXPECT_CALL(action, getHost())
@@ -120,7 +141,8 @@ TEST(PeakInvestigatorSaaS, downloadFile_OK)
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
 
-  ASSERT_NO_THROW(service.downloadFile(action, REMOTE_FILE, REMOTE_FILE));
+  ASSERT_NO_THROW(service.downloadFile(action, REMOTE_FILE, REMOTE_FILE, &progress));
+  ASSERT_EQ(progress.getTotal(), progress.getProgress());
 }
 #endif
 
