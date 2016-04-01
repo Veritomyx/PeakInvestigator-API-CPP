@@ -34,18 +34,12 @@
 //
 //
 
-#ifndef PEAKINVESTIGATORSAAS_H
-#define PEAKINVESTIGATORSAAS_H
+#ifndef ABSTRACTPROGRESS_H
+#define ABSTRACTPROGRESS_H
 
-#include <string>
-#include <fstream>
+#include <iostream>
 
 #include "PeakInvestigatorSaaS_export.h"
-#include "AbstractProgress.h"
-
-struct _LIBSSH2_SESSION;
-struct _LIBSSH2_SFTP;
-struct _LIBSSH2_SFTP_HANDLE;
 
 namespace Veritomyx
 {
@@ -55,48 +49,15 @@ namespace Veritomyx
     class BaseAction;
     class SftpAction;
 
-    enum Direction { UPLOAD, DOWNLOAD };
-
-    class PEAKINVESTIGATORSAAS_EXPORT PeakInvestigatorSaaS
+    class PEAKINVESTIGATORSAAS_EXPORT AbstractProgress
     {
       public:
-
-        PeakInvestigatorSaaS(std::string hostname, std::string path = "/api/", std::string agent = "libcurl-agent/1.0");
-        ~PeakInvestigatorSaaS();
-
-        std::string executeAction(BaseAction* action);
-
-        void uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename, AbstractProgress* progress = NULL);
-        void downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename, AbstractProgress* progress = NULL);
-
-      private:
-
-        void establishSSHSession_(SftpAction &action);
-        void confirmSSHServerIdentity_();
-        void authenticateUser_(SftpAction &action);
-        void establishSFTPSession_();
-        void disconnect_();
-
-        int getConnectedSocket(const char* host, const char* port);
-        _LIBSSH2_SFTP_HANDLE* getSftpHandle(_LIBSSH2_SFTP* sftp_session, Direction direction, const char* filename);
-
-        void uploadFile_(std::ifstream& inputFile, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
-
-        std::ostream* logger_;
-
-        std::string hostname_;
-        std::string path_;
-        std::string agent_;
-
-        int state_;
-        int socket_;
-        struct addrinfo* host_info_;
-
-        _LIBSSH2_SESSION* ssh_session_;
-        _LIBSSH2_SFTP* sftp_session_;
+        virtual void initialize(int count, std::string label) = 0;
+        virtual void setProgress(int count) = 0;
+        virtual void finish() = 0;
     };
-
   }
+
 }
 
-#endif // PEAKINVESTIGATORSAAS_H
+#endif // ABSTRACTPROGRESS_H

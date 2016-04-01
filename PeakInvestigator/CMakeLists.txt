@@ -29,6 +29,7 @@ SET(PEAKINVESTIGATOR_SOURCES
 
 SET(PEAKINVESTIGATOR_HEADERS
     PeakInvestigatorSaaS.h
+    AbstractProgress.h
     Actions/BaseAction.h
     Actions/PiVersionsAction.h
     Actions/InitAction.h

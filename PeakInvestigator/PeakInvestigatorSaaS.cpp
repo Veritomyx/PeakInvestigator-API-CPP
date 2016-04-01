@@ -34,7 +34,6 @@
 //
 //
 
-#include <iostream>
 #include <stdexcept>
 
 #include <curl/curl.h>
@@ -72,6 +71,7 @@
 #endif
 
 #include "PeakInvestigatorSaaS.h"
+#include "AbstractProgress.h"
 #include "Actions/BaseAction.h"
 #include "Actions/SftpAction.h"
 
@@ -90,6 +90,7 @@
 #define ESTABLISH_SSH_SESSION     8
 #define ESTABLISH_SFTP_SESSION    16
 
+#define BUFFER_SIZE 131072
 #define TIMEOUT 10000
 #define LOG *logger_
 
@@ -169,16 +170,46 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
   return response;
 }
 
-void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename)
+void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename, AbstractProgress* progress)
 {
+  std::ifstream file(localFilename);
+  if(!file)
+  {
+    throw std::runtime_error("Unable to open local file: " + localFilename);
+  }
+
   establishSSHSession_(action);
   authenticateUser_(action);
   establishSFTPSession_();
 
+  LIBSSH2_SFTP_HANDLE* sftp = getSftpHandle(sftp_session_, UPLOAD, remoteFilename.c_str());
+  if(!sftp)
+  {
+    file.close();
+    throw std::runtime_error("Unable to open remote file: " + remoteFilename);
+  }
+
+  if(progress)
+  {
+    file.seekg(0, file.end);
+    progress->initialize(file.tellg(), "Uploading file to SFTP server...");
+    file.seekg(0, file.beg);
+  }
+
+  uploadFile_(file, sftp, progress);
+
+  if(progress)
+  {
+    progress->finish();
+  }
+
+  file.close();
+  libssh2_sftp_close_handle(sftp);
+
   disconnect_();
 }
 
-void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename)
+void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename, AbstractProgress* progress)
 {
 
 }
@@ -290,4 +321,65 @@ int PeakInvestigatorSaaS::getConnectedSocket(const char* host, const char* port)
 
   state_ |= CONNECT_SOCKET;
   return sock;
+}
+
+_LIBSSH2_SFTP_HANDLE* PeakInvestigatorSaaS::getSftpHandle(_LIBSSH2_SFTP* sftp_session, Direction direction, const char* filename)
+{
+  int flags, mode;
+  switch(direction)
+  {
+  case UPLOAD:
+    flags = LIBSSH2_FXF_WRITE | LIBSSH2_FXF_CREAT | LIBSSH2_FXF_TRUNC;
+    mode = LIBSSH2_SFTP_S_IRUSR | LIBSSH2_SFTP_S_IWUSR | LIBSSH2_SFTP_S_IRGRP | LIBSSH2_SFTP_S_IROTH;
+    return libssh2_sftp_open(sftp_session, filename, flags, mode);
+  case DOWNLOAD:
+    flags = LIBSSH2_FXF_READ;
+    mode = 0;
+    return libssh2_sftp_open(sftp_session, filename, flags, mode);
+  default:
+    throw std::runtime_error("SFTP direction not correctly specified.");
+  }
+
+  return NULL;
+}
+
+void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress)
+{
+  int written, transferred = 0;
+  char buffer[BUFFER_SIZE];
+
+  LOG << "Uploading file...\n";
+
+  while(!file.eof())
+  {
+    file.read(buffer, BUFFER_SIZE);
+    int read = file.gcount();
+
+    char* ptr = buffer;
+    while(read)
+    {
+      written = libssh2_sftp_write(sftp, ptr, read);
+      if (written < 0)
+      {
+        file.close();
+        libssh2_sftp_close_handle(sftp);
+
+        std::string message = "Problem writing bytes to server: " + std::to_string(read);
+        throw std::runtime_error(message);
+      }
+
+      ptr += written;
+      transferred += written;
+      read -= written;
+
+      if(progress)
+      {
+        progress->setProgress(transferred);
+      }
+    }
+
+  }
+
+  LOG << "Finished.\n";
+
 }
