@@ -132,5 +132,5 @@ TEST(StatusActionTest, ExampleResponse_Deleted)
   ASSERT_STREQ("2016-02-03 18:36:05", buffer);
 
   delete buffer;
-  #endif _WIN32
+  #endif
 }
