@@ -40,6 +40,10 @@
 
 #include "BaseAction.h"
 
+#ifdef _WIN32
+char *strptime(const char *buf, const char *fmt, struct tm *tm);
+#endif
+
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string BaseAction::VERSION_OF_API("3.4");
@@ -143,6 +147,7 @@ double BaseAction::getDoubleAttribute(std::string attribute) const
   return response_object_->get(attribute, Json::nullValue).asDouble();
 }
 
+#ifndef _WIN32
 struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 {
   std::string date_time_string = response_object_->get(attribute, Json::nullValue).asString();
@@ -150,12 +155,13 @@ struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
   strptime(date_time_string.c_str(), PARSE_DATE_FORMAT.c_str(), &datetime);
   return datetime;
 }
+#endif
 
 std::vector<std::string> BaseAction::getStringArrayAttribute(std::string attribute) const
 {
   Json::Value array = response_object_->get(attribute, Json::nullValue);
   std::vector<std::string> values;
-  for (uint i = 0; i < array.size(); i++) {
+  for (unsigned int i = 0; i < array.size(); i++) {
     values.push_back(array[i].asString());
   }
   return values;

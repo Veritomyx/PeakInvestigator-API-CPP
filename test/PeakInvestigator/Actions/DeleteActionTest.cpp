@@ -58,10 +58,12 @@ TEST(DeleteActionTest, ExampleResponse)
 
   ASSERT_STREQ("P-504.4256", action.getJob().c_str());
 
+#ifndef _WIN32
   struct tm datetime = action.getDateTime();
   int size = sizeof("yyyy-mm-dd HH:MM:SS");
   char buffer[size];
   int retval = strftime(buffer, size, BaseAction::PARSE_DATE_FORMAT.c_str(), &datetime);
   ASSERT_EQ(size, retval + 1);
   ASSERT_STREQ("2016-02-03 18:35:06", buffer);
+#endif
 }

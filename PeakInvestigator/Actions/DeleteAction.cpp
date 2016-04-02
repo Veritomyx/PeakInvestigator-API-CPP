@@ -69,11 +69,13 @@ std::string DeleteAction::getJob()
   return getStringAttribute("Job");
 }
 
+#ifndef _WIN32
 struct tm DeleteAction::getDateTime()
 {
   preCheck();
   return getDateTimeAttribute("Datetime");
 }
+#endif
 
 std::string DeleteAction::getErrorMessage()
 {

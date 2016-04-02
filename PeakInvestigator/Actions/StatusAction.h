@@ -73,7 +73,9 @@ namespace Veritomyx
 
         Status getStatus();
 
+#ifndef _WIN32
         struct tm getDateTime();
+#endif
 
         int getNumberOfInputScans();
 

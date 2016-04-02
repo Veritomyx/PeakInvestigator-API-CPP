@@ -100,11 +100,13 @@ StatusAction::Status StatusAction::getStatus()
   }
 }
 
+#ifndef _WIN32
 struct tm StatusAction::getDateTime()
 {
   preCheck();
   return getDateTimeAttribute("Datetime");
 }
+#endif
 
 int StatusAction::getNumberOfInputScans()
 {

@@ -21,7 +21,7 @@ add_dependencies(libgtest gtest)
 
 # Set gtest properties
 set_target_properties(libgtest PROPERTIES
-    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/libgtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/${CMAKE_STATIC_LIBBRARY_PREFIX}gtest${CMAKE_STATIC_LIBRARY_SUFFIX}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
 )
 
@@ -31,6 +31,6 @@ add_dependencies(libgmock gtest)
 
 # Set gtest properties
 set_target_properties(libgmock PROPERTIES
-    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/libgmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/gtest/lib/${CMAKE_STATIC_LIBBRARY_PREFIX}gmock${CMAKE_STATIC_LIBRARY_SUFFIX}"
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
 )

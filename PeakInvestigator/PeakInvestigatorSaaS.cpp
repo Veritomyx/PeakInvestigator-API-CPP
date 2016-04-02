@@ -151,7 +151,7 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
 
   // need to copy query to a C-string for some reason
   std::string query = action->buildQuery();
-  char postData[query.size() + 1];
+  char* postData = new char[query.size() + 1];
   std::strcpy(postData, query.c_str());
 
   curl_easy_setopt(curl, CURLOPT_URL,  url.c_str());
@@ -162,6 +162,7 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
 
   retval = curl_easy_perform(curl);
 
+  delete postData;
   if(retval != CURLE_OK)
   {
     throw std::runtime_error("Problem with CURL");
@@ -333,6 +334,7 @@ void PeakInvestigatorSaaS::disconnect_()
 
 }
 
+#pragma comment(lib, "Ws2_32.lib")
 int PeakInvestigatorSaaS::getConnectedSocket(const char* host, const char* port)
 {
   // setup hints to for host lookup

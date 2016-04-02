@@ -67,7 +67,9 @@ namespace Veritomyx
       public:
         std::string getJob();
 
+#ifndef _WIN32
         struct tm getDateTime();
+#endif
 
         std::string getErrorMessage();
 

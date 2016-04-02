@@ -65,11 +65,13 @@ TEST(StatusActionTest, ExampleResponse_Preparing)
   ASSERT_STREQ("P-504.5148", action.getJob().c_str());
   ASSERT_EQ(StatusAction::PREPARING, action.getStatus());
 
+#ifndef _WIN32
   struct tm datetime = action.getDateTime();
   char* buffer = format_datetime(datetime);
   ASSERT_STREQ("2016-02-03 18:18:12", buffer);
 
   delete buffer;
+#endif
 }
 
 // "{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Running\", \"Datetime\":\"2016-02-03 18:25:09\"}"
@@ -81,11 +83,13 @@ TEST(StatusActionTest, ExampleResponse_Running)
   ASSERT_STREQ("P-504.5148", action.getJob().c_str());
   ASSERT_EQ(StatusAction::RUNNING, action.getStatus());
 
+#ifndef _WIN32
   struct tm datetime = action.getDateTime();
   char* buffer = format_datetime(datetime);
   ASSERT_STREQ("2016-02-03 18:25:09", buffer);
 
   delete buffer;
+#endif
 }
 
 // "{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Done\", \"Datetime\":\"2016-02-03 18:31:05\", \"ScansInput\":3, \"ScansComplete\":3, \"ActualCost\":0.36,
@@ -98,11 +102,13 @@ TEST(StatusActionTest, ExampleResponse_Done)
   ASSERT_STREQ("P-504.5148", action.getJob().c_str());
   ASSERT_EQ(StatusAction::DONE, action.getStatus());
 
+#ifndef _WIN32
   struct tm datetime = action.getDateTime();
   char* buffer = format_datetime(datetime);
   ASSERT_STREQ("2016-02-03 18:31:05", buffer);
 
   delete buffer;
+#endif
 
   ASSERT_EQ(3, action.getNumberOfInputScans());
   ASSERT_EQ(3, action.getNumberOfCompleteScans());
@@ -120,9 +126,11 @@ TEST(StatusActionTest, ExampleResponse_Deleted)
   ASSERT_STREQ("P-504.1463", action.getJob().c_str());
   ASSERT_EQ(StatusAction::DELETED, action.getStatus());
 
+#ifndef _WIN32
   struct tm datetime = action.getDateTime();
   char* buffer = format_datetime(datetime);
   ASSERT_STREQ("2016-02-03 18:36:05", buffer);
 
   delete buffer;
+#ifndef _WIN32
 }

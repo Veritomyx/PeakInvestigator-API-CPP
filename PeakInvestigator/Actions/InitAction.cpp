@@ -108,7 +108,7 @@ EstimatedCosts InitAction::getEstimatedCosts()
   preCheck();
 
   Json::Value estimated_costs = response_object_->get("EstimatedCost", Json::nullValue);
-  for(uint i = 0; i < estimated_costs.size(); i++)
+  for(unsigned int i = 0; i < estimated_costs.size(); i++)
   {
     Json::Value estimated_cost = estimated_costs[i];
     std::string instrument = estimated_cost.get("Instrument", Json::nullValue).asString();

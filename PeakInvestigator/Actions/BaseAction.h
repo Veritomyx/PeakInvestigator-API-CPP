@@ -95,7 +95,9 @@ namespace Veritomyx
 
         double getDoubleAttribute(std::string attribute) const;
 
+#ifndef _WIN32
         struct tm getDateTimeAttribute(std::string attribute = "Datetime") const;
+#endif
 
         std::vector<std::string> getStringArrayAttribute(std::string attribute) const;
 
