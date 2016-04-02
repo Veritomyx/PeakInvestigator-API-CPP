@@ -6,13 +6,18 @@ find_package(Threads REQUIRED)
 # Enable ExternalProject CMake module
 include(ExternalProject)
 
+SET(GTEST_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/gtest)
+IF(WIN32)
+	SET(GTEST_CMAKE_ARGS ${GTEST_CMAKE_ARGS} -DBUILD_SHARED_LIBS=ON)
+ENDIF()
+
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
     GIT_REPOSITORY https://github.com/google/googletest.git
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     # Disable install step
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/gtest
+    CMAKE_ARGS ${GTEST_CMAKE_ARGS}
 )
 
 # Create a libgtest target to be used as a dependency by test programs
