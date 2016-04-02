@@ -119,12 +119,26 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
   sftp_session_ = NULL;
 
   state_ = LIBRARY_UNINITIALIZED;
+
+#ifdef _WIN32
+  WSADATA wsadata;
+  int err;
+
+  err = WSAStartup(MAKEWORD(2, 0), &wsadata);
+  if (err != 0)
+  {
+	  LOG << "Unable to start winsock.\n";
+	throw std::runtime_error("Unable to start winsock.");
+  }
+#endif
+
   if (libssh2_init(0) != 0)
   {
     throw std::runtime_error("Unable to initialize SSH library.");
   }
 
   state_ |= INITIALIZE_LIBRARY;
+
 }
 
 PeakInvestigatorSaaS::~PeakInvestigatorSaaS()
@@ -323,7 +337,11 @@ void PeakInvestigatorSaaS::disconnect_()
     libssh2_session_free(ssh_session_);
     state_ ^= INITIALIZE_SSH_SESSION;
   case SOCKET_CONNECTED:
+#ifdef _WIN32
+    closesocket(socket_);
+#else
     close(socket_);
+#endif
     freeaddrinfo(host_info_);
     state_ ^= CONNECT_SOCKET;
   case LIBRARY_INITIALIZED:
