@@ -43,6 +43,7 @@
 #include "TarFile.h"
 
 #define BUFFER_SIZE 32768
+#define TARHEADER_SIZE sizeof(Tar::PosixTarHeader)
 
 using namespace Veritomyx::PeakInvestigator;
 
@@ -130,21 +131,44 @@ void TarFile::writeFile(const std::string& filename, std::istream& contents)
   }
 
   // fill remaining 512-byte block with NULL
-  while(total % sizeof(TarHeader) != 0)
+  while(total % TARHEADER_SIZE != 0)
   {
     gzputc(file_, 0);
     total++;
   }
 }
 
-void TarFile::readNextFile(std::iostream& contents)
+void TarFile::readNextFile(std::ostream& contents)
 {
   TarHeader header;
-  int read = gzread(file_, &header, sizeof(TarHeader));
+  unsigned int read = gzread(file_, &header, TARHEADER_SIZE);
   if(read == 0)
   {
     return;
   }
+  else if(read != TARHEADER_SIZE)
+  {
+    throw std::runtime_error("Problem reading a tar header of " + filename_);
+  }
+
+  long long size = std::atoll(header.size);
+  char buffer[BUFFER_SIZE];
+
+  // gzread doesn't necessarily stop reading
+  while(size > BUFFER_SIZE)
+  {
+    read = gzread(file_, buffer, BUFFER_SIZE);
+    contents.write(buffer, read);
+    size -= read;
+  }
+
+  read = gzread(file_, buffer, size);
+  contents.write(buffer, read);
+
+  // read rest of entry (NULLs)
+  unsigned int remainder = TARHEADER_SIZE - (size % TARHEADER_SIZE);
+  gzread(file_, buffer, remainder);
+
 }
 
 void TarFile::writeHeader_(const std::string& filename, unsigned long long size)
@@ -152,7 +176,7 @@ void TarFile::writeHeader_(const std::string& filename, unsigned long long size)
   TarHeader header;
 
   // initialize header
-  std::memset(&header, 0, sizeof(header));
+  std::memset(&header, 0, TARHEADER_SIZE);
 
   // set archive name
   std::sprintf(header.name, "%s", filename.c_str());
@@ -174,8 +198,8 @@ void TarFile::writeHeader_(const std::string& filename, unsigned long long size)
 
 
   // now write archive header (required before writing data)
-  int written = gzwrite(file_, &header, sizeof(TarHeader));
-  if(written != sizeof(TarHeader))
+  int written = gzwrite(file_, &header, TARHEADER_SIZE);
+  if(written != TARHEADER_SIZE)
   {
     throw std::runtime_error("Problem writing tarball header for: " + filename);
   }

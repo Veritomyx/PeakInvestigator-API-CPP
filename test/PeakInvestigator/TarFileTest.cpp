@@ -34,43 +34,38 @@
 //
 //
 
-#ifndef TARFILE_H
-#define TARFILE_H
+#include <sstream>
+#include <fstream>
 
-#include <string>
-#include <istream>
+#include <PeakInvestigator/TarFile.h>
+#include "gtest/gtest.h"
 
-#include "PeakInvestigatorSaaS_export.h"
+using namespace Veritomyx::PeakInvestigator;
 
-struct gzFile_s;
-
-namespace Veritomyx
+TEST(TarFile, WritesFromString)
 {
-  namespace PeakInvestigator
-  {
-    enum Mode { SAVE, LOAD };
+  TarFile tarfile("test.tar", SAVE);
+  std::stringstream out1;
+  out1 << "Test" << " " << 1;
+  std::stringstream out2;
+  out2 << "Test" << " " << 2;
+  std::stringstream out3;
+  out3 << "Test" << " " << 3;
 
-    class PEAKINVESTIGATORSAAS_EXPORT TarFile
-    {
-      public:
-        TarFile(std::string filename, Mode mode);
-        ~TarFile();
+  ASSERT_NO_THROW(tarfile.writeFile("test1.txt", out1));
+  ASSERT_NO_THROW(tarfile.writeFile("test2.txt", out2));
+  ASSERT_NO_THROW(tarfile.writeFile("test2.txt", out3));
+  ASSERT_NO_THROW(tarfile.close());
 
-        void writeFile(const std::string& filename, std::istream &contents);
-        void readNextFile(std::ostream& contents);
+  TarFile tarfile2("test.tar", LOAD);
+  std::stringstream in1, in2, in3;
 
-        void close();
+  ASSERT_NO_THROW(tarfile2.readNextFile(in1));
+  ASSERT_NO_THROW(tarfile2.readNextFile(in2));
+  ASSERT_NO_THROW(tarfile2.readNextFile(in3));
 
-      private:
-        void writeHeader_(const std::string& filename, unsigned long long size);
-
-        gzFile_s* file_;
-        std::string filename_;
-
-        Mode mode_;
-        bool isOpen_;
-    };
-  }
+  ASSERT_STREQ(out1.str().c_str(), in1.str().c_str());
+  ASSERT_STREQ(out2.str().c_str(), in2.str().c_str());
+  ASSERT_STREQ(out3.str().c_str(), in3.str().c_str());
 }
 
-#endif // TARFILE_H
