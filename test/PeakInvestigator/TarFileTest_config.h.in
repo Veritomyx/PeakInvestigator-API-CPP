@@ -34,72 +34,11 @@
 //
 //
 
-#include <sstream>
-#include <fstream>
+#ifndef TARFILETEST_CONFIG_H
+#define TARFILETEST_CONFIG_H
 
-#include <PeakInvestigator/TarFile.h>
-#include "TarFileTest_config.h"
-#include "gtest/gtest.h"
+#include <string>
 
-using namespace Veritomyx::PeakInvestigator;
+#define GET_TEST_DATA_PATH(filename) (std::string("@TEST_DATA_DIR@/") + filename).c_str()
 
-TEST(TarFile, WritesFromString)
-{
-  TarFile tarfile("test1.tar.gz", SAVE);
-  std::stringstream out1;
-  out1 << "Test" << " " << 1;
-  std::stringstream out2;
-  out2 << "Test" << " " << 2;
-  std::stringstream out3;
-  out3 << "Test" << " " << 3;
-
-  ASSERT_NO_THROW(tarfile.writeFile("test1.txt", out1));
-  ASSERT_NO_THROW(tarfile.writeFile("test2.txt", out2));
-  ASSERT_NO_THROW(tarfile.writeFile("test3.txt", out3));
-  ASSERT_NO_THROW(tarfile.close());
-
-  TarFile tarfile2("test1.tar.gz", LOAD);
-  std::stringstream in1, in2, in3;
-
-  std::string name1 = tarfile2.readNextFile(in1);
-  ASSERT_STREQ("test1.txt", name1.c_str());
-  ASSERT_STREQ(out1.str().c_str(), in1.str().c_str());
-
-  std::string name2 = tarfile2.readNextFile(in2);
-  ASSERT_STREQ("test2.txt", name2.c_str());
-  ASSERT_STREQ(out2.str().c_str(), in2.str().c_str());
-
-  std::string name3 = tarfile2.readNextFile(in3);
-  ASSERT_STREQ("test3.txt", name3.c_str());
-  ASSERT_STREQ(out3.str().c_str(), in3.str().c_str());
-}
-
-TEST(TarFile, WritesFromFile)
-{
-  TarFile tarfile("test2.tar.gz", SAVE);
-  std::fstream fout1(GET_TEST_DATA_PATH("scan1.txt"));
-  std::fstream fout2(GET_TEST_DATA_PATH("scan2.txt"));
-
-  std::stringstream out1;
-  out1 << fout1.rdbuf();
-  fout1.seekg(0);
-
-  std::stringstream out2;
-  out2 << fout2.rdbuf();
-  fout2.seekg(0);
-
-  ASSERT_NO_THROW(tarfile.writeFile("scan1.txt", fout1));
-  ASSERT_NO_THROW(tarfile.writeFile("scan2.txt", fout2));
-  ASSERT_NO_THROW(tarfile.close());
-
-  TarFile tarfile2("test2.tar.gz", LOAD);
-  std::stringstream in1, in2;
-
-  std::string name1 = tarfile2.readNextFile(in1);
-  ASSERT_STREQ("scan1.txt", name1.c_str());
-  ASSERT_STREQ(out1.str().c_str(), in1.str().c_str());
-
-  std::string name2 = tarfile2.readNextFile(in2);
-  ASSERT_STREQ("scan2.txt", name2.c_str());
-  ASSERT_STREQ(out2.str().c_str(), in2.str().c_str());
-}
+#endif

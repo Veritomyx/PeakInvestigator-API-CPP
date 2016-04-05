@@ -151,7 +151,8 @@ std::string TarFile::readNextFile(std::ostream& contents)
     throw std::runtime_error("Problem reading a tar header of " + filename_);
   }
 
-  long long size = std::atoll(header.size);
+  long long size;
+  std::sscanf(header.size, "%011llo", &size);
   char buffer[BUFFER_SIZE];
 
   // gzread doesn't necessarily stop reading
