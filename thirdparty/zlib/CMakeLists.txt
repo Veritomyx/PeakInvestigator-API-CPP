@@ -20,7 +20,13 @@ add_library(zlib IMPORTED STATIC GLOBAL)
 add_dependencies(zlib z)
 
 # Set zlib properties
-set_target_properties(zlib PROPERTIES
-    "IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/zlib/lib/${CMAKE_STATIC_LIBRARY_PREFIX}z${CMAKE_STATIC_LIBRARY_SUFFIX}"
-)
+if(MSVC)
+	set_target_properties(zlib PROPERTIES
+		"IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/zlib/lib/zlibstatic.lib"
+	)
+else()
+	set_target_properties(zlib PROPERTIES
+		"IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/zlib/lib/${CMAKE_STATIC_LIBRARY_PREFIX}z${CMAKE_STATIC_LIBRARY_SUFFIX}"
+	)
+endif()
 

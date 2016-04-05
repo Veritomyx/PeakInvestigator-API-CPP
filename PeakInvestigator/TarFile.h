@@ -48,7 +48,7 @@ namespace Veritomyx
 {
   namespace PeakInvestigator
   {
-    enum Mode { SAVE, LOAD };
+    enum PEAKINVESTIGATORSAAS_EXPORT Mode { SAVE, LOAD };
 
     class PEAKINVESTIGATORSAAS_EXPORT TarFile
     {

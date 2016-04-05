@@ -36,6 +36,7 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <ctime>
 
 #include <zlib.h>
 #include <tarball.h>
@@ -116,7 +117,7 @@ void TarFile::writeFile(const std::string& filename, std::istream& contents)
   while(total < size)
   {
     contents.read(buffer, BUFFER_SIZE);
-    const std::streampos read = contents.gcount();
+    const int read = contents.gcount();
     int written = gzwrite(file_, &buffer, read);
     if(read != written)
     {
@@ -188,7 +189,7 @@ void TarFile::writeHeader_(const std::string& filename, unsigned long long size)
   std::memcpy(header.version, "  ", sizeof(header.version));
 
   // set modification time, mode, and filetype
-  std::sprintf(header.mtime, "%011lo", time(NULL));
+  std::sprintf(header.mtime, "%011lo", std::time(NULL));
   std::sprintf(header.mode, "%07o", 0644);
   header.typeflag[0] = 0;
 
