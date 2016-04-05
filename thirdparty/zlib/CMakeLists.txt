@@ -22,7 +22,8 @@ add_dependencies(zlib z)
 # Set zlib properties
 if(MSVC)
 	set_target_properties(zlib PROPERTIES
-		"IMPORTED_LOCATION" "${CMAKE_BINARY_DIR}/zlib/lib/zlibstatic.lib"
+		IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/zlib/lib/zlibstatic.lib"
+		IMPORTED_LOCATION_DEBUG "${CMAKE_BINARY_DIR}/zlib/lib/zlibstaticd.lib"
 	)
 else()
 	set_target_properties(zlib PROPERTIES
