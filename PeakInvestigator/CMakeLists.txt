@@ -17,6 +17,7 @@ CONFIGURE_FILE(
 
 SET(PEAKINVESTIGATOR_SOURCES
     PeakInvestigatorSaaS.cpp
+    TarFile.cpp
     Actions/BaseAction.cpp
     Actions/PiVersionsAction.cpp
     Actions/InitAction.cpp
@@ -30,6 +31,7 @@ SET(PEAKINVESTIGATOR_SOURCES
 SET(PEAKINVESTIGATOR_HEADERS
     PeakInvestigatorSaaS.h
     AbstractProgress.h
+    TarFile.h
     Actions/BaseAction.h
     Actions/PiVersionsAction.h
     Actions/InitAction.h
@@ -47,9 +49,16 @@ ADD_LIBRARY(PeakInvestigatorSaaS SHARED
                 ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS}
 )
 GENERATE_EXPORT_HEADER(PeakInvestigatorSaaS EXPORT_FILE_NAME PeakInvestigatorSaaS_export.h)
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp ${CMAKE_CURRENT_BINARY_DIR} ${CURL_INCLUDE_DIRS} ${LIBSSH2_INCLUDE_DIRS})
+INCLUDE_DIRECTORIES(
+    ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp
+    ${CMAKE_SOURCE_DIR}/thirdparty/tarball
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_BINARY_DIR}/zlib/include
+    ${CURL_INCLUDE_DIRS}
+    ${LIBSSH2_INCLUDE_DIRS}
+)
 
-TARGET_LINK_LIBRARIES(PeakInvestigatorSaaS PRIVATE jsoncpp ${CURL_LIBRARIES} ${LIBSSH2_LIBRARIES})
+TARGET_LINK_LIBRARIES(PeakInvestigatorSaaS PRIVATE jsoncpp tarball zlib ${CURL_LIBRARIES} ${LIBSSH2_LIBRARIES})
 
 LIST(APPEND PEAKINVESTIGATOR_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/PeakInvestigatorSaaS_export.h")
 

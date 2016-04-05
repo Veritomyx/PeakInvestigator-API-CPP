@@ -12,6 +12,10 @@ SET(SOURCES
     PeakInvestigatorSaaSTest.cpp
 )
 
+SET(TARFILE_TEST_SOURCES
+    TarFileTest.cpp
+)
+
 SET(PEAKINVESTIGATOR_USERNAME "" CACHE STRING "Specify a valid username for testing PeakInvestigatorSaaS")
 SET(PEAKINVESTIGATOR_PASSWORD "" CACHE STRING "Specify a valid password for testing PeakInvestigatorSaaS")
 SET(PEAKINVESTIGATOR_PROJECT "" CACHE STRING "Specify a valid project for testing PeakInvestigatorSaaS")
@@ -59,3 +63,7 @@ ADD_TEST(NAME PeakInvestigatorActionsTest COMMAND PeakInvestigatorActionsTest)
 ADD_EXECUTABLE(PeakInvestigatorSaaSTest ${SOURCES} main.cpp)
 TARGET_LINK_LIBRARIES(PeakInvestigatorSaaSTest PeakInvestigatorSaaS libgtest libgmock)
 ADD_TEST(NAME PeakInvestigatorSaaSTest COMMAND PeakInvestigatorSaaSTest)
+
+ADD_EXECUTABLE(TarFileTest ${TARFILE_TEST_SOURCES} main.cpp)
+TARGET_LINK_LIBRARIES(TarFileTest PeakInvestigatorSaaS libgtest libgmock)
+ADD_TEST(NAME TarFileTest COMMAND TarFileTest)
