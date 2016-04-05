@@ -138,13 +138,13 @@ void TarFile::writeFile(const std::string& filename, std::istream& contents)
   }
 }
 
-void TarFile::readNextFile(std::ostream& contents)
+std::string TarFile::readNextFile(std::ostream& contents)
 {
   TarHeader header;
   unsigned int read = gzread(file_, &header, TARHEADER_SIZE);
   if(read == 0)
   {
-    return;
+    return "";
   }
   else if(read != TARHEADER_SIZE)
   {
@@ -169,6 +169,7 @@ void TarFile::readNextFile(std::ostream& contents)
   unsigned int remainder = TARHEADER_SIZE - (size % TARHEADER_SIZE);
   gzread(file_, buffer, remainder);
 
+  return header.name;
 }
 
 void TarFile::writeHeader_(const std::string& filename, unsigned long long size)

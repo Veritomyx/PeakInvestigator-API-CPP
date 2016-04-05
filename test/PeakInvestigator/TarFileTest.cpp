@@ -54,18 +54,22 @@ TEST(TarFile, WritesFromString)
 
   ASSERT_NO_THROW(tarfile.writeFile("test1.txt", out1));
   ASSERT_NO_THROW(tarfile.writeFile("test2.txt", out2));
-  ASSERT_NO_THROW(tarfile.writeFile("test2.txt", out3));
+  ASSERT_NO_THROW(tarfile.writeFile("test3.txt", out3));
   ASSERT_NO_THROW(tarfile.close());
 
   TarFile tarfile2("test.tar", LOAD);
   std::stringstream in1, in2, in3;
 
-  ASSERT_NO_THROW(tarfile2.readNextFile(in1));
-  ASSERT_NO_THROW(tarfile2.readNextFile(in2));
-  ASSERT_NO_THROW(tarfile2.readNextFile(in3));
-
+  std::string name1 = tarfile2.readNextFile(in1);
+  ASSERT_STREQ("test1.txt", name1.c_str());
   ASSERT_STREQ(out1.str().c_str(), in1.str().c_str());
+
+  std::string name2 = tarfile2.readNextFile(in2);
+  ASSERT_STREQ("test2.txt", name2.c_str());
   ASSERT_STREQ(out2.str().c_str(), in2.str().c_str());
+
+  std::string name3 = tarfile2.readNextFile(in3);
+  ASSERT_STREQ("test3.txt", name3.c_str());
   ASSERT_STREQ(out3.str().c_str(), in3.str().c_str());
 }
 

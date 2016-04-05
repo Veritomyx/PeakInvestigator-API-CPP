@@ -57,7 +57,7 @@ namespace Veritomyx
         ~TarFile();
 
         void writeFile(const std::string& filename, std::istream &contents);
-        void readNextFile(std::ostream& contents);
+        std::string readNextFile(std::ostream& contents);
 
         void close();
 
