@@ -37,7 +37,7 @@
 #ifndef STATUS_ACTION_H
 #define STATUS_ACTION_H
 
-#include "PeakInvestigatorSaaS_export.h"
+#include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
 #include "BaseAction.h"
 
 namespace Veritomyx

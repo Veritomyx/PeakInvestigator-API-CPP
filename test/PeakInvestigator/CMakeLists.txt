@@ -57,7 +57,7 @@ ENDIF()
 
 INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}
-    ${PROJECT_BINARY_DIR}/PeakInvestigator
+    ${PROJECT_BINARY_DIR}
     ${PROJECT_BINARY_DIR}/test/PeakInvestigator
     ${PROJECT_BINARY_DIR}/gtest/include
 )

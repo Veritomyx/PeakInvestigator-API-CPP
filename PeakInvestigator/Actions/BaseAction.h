@@ -43,7 +43,7 @@
 #include <string>
 #include <vector>
 
-#include "PeakInvestigatorSaaS_export.h"
+#include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
 
 namespace Json
 {

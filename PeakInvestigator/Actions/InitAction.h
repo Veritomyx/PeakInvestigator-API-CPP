@@ -41,7 +41,7 @@
 #include <map>
 #include <list>
 
-#include "PeakInvestigatorSaaS_export.h"
+#include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
 #include "BaseAction.h"
 
 namespace Veritomyx
