@@ -1,12 +1,12 @@
 # PeakInvestigator-CPP-SDK
-A C++ library for interacting with the PeakInvestigator™ public API (https://peakinvestigator.veritomyx.com/api)
+A C++ library for interacting with the PeakInvestigator™ public API (https://peakinvestigator.veritomyx.com/api).
 
 ## Building
 CMake is used to generate files for a naive build on different supported platforms, including Visual Studio 
 solutions, Unix-style Makefiles, and XCode. For a full list, see https://cmake.org/cmake/help/v3.0/manual/cmake-generators.7.html.
 
 The general process is to create a build directory and run CMake from there. For example, the following commands
-should work on Unix-based platforms:
+will generate Makefiles on Unix-based platforms:
 
 ```
 mkdir build
