@@ -1,6 +1,8 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.3 FATAL_ERROR)
 PROJECT(PeakInvestigator-API-CPP)
 
+SET(PeakInvestigatorSaaS_VERSION 0.9.0)
+
 INCLUDE(CTest)
 INCLUDE(cmake/InstallLocation.cmake)
 
