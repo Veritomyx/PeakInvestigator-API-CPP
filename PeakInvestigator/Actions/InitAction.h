@@ -65,6 +65,13 @@ namespace Veritomyx
         ResponseTimeCosts forInstrument(std::string) const;
     };
 
+    struct PEAKINVESTIGATORSAAS_EXPORT JobAttributes
+    {
+        int min_mass;
+        int max_mass;
+        int max_points;
+    };
+
     class PEAKINVESTIGATORSAAS_EXPORT InitAction : public BaseAction
     {
       private:
@@ -72,9 +79,7 @@ namespace Veritomyx
         int project_id_;
         std::string version_of_PI_;
         int scan_count_;
-        int max_points_;
-        int min_mass_;
-        int max_mass_;
+        JobAttributes attributes_;
         int calibration_count_;
         EstimatedCosts estimated_costs_;
 
@@ -83,7 +88,7 @@ namespace Veritomyx
 
         InitAction(std::string user, std::string code,
                    int project_id, std::string version_of_PI, int scan_count,
-                   int max_points, int min_mass, int max_mass, int calibration_count = 0);
+                   const JobAttributes& attributes, int calibration_count = 0);
 
         std::string buildQuery() const;
 

@@ -45,16 +45,16 @@ using namespace Veritomyx::PeakInvestigator;
 const std::string InitAction::EXAMPLE_RESPONSE("{\"Action\":\"INIT\", \"Job\":\"V-504.1551\", \"ID\":504, \"Funds\":115.01, \"EstimatedCost\":[{\"Instrument\":\"TOF\", \"RTO\":\"RTO-24\", \"Cost\":27.60}, {\"Instrument\":\"Orbitrap\", \"RTO\":\"RTO-24\", \"Cost\":36.22}, {\"Instrument\":\"IonTrap\", \"RTO\":\"RTO-24\", \"Cost\":32.59}]}");
 
 InitAction::InitAction(std::string user, std::string code, int project_id, std::string version_of_PI, int scan_count,
-                       int max_points, int min_mass, int max_mass, int calibration_count) :
+                       const JobAttributes& attributes, int calibration_count) :
   BaseAction(user, code, "INIT")
 {
 
   project_id_ = project_id;
   version_of_PI_ = version_of_PI;
   scan_count_ = scan_count;
-  max_points_ = max_points;
-  min_mass_ = min_mass;
-  max_mass_ = max_mass;
+  attributes_.min_mass = attributes.min_mass;
+  attributes_.max_mass = attributes.max_mass;
+  attributes_.max_points = attributes.max_points;
   calibration_count_ = calibration_count;
 }
 
@@ -64,9 +64,9 @@ std::string InitAction::buildQuery() const
   query.append("&ID="); query.append(std::to_string(project_id_));
   query.append("&PI_Version="); query.append(version_of_PI_);
   query.append("&ScanCount="); query.append(std::to_string(scan_count_));
-  query.append("&MaxPoints="); query.append(std::to_string(max_points_));
-  query.append("&MinMass="); query.append(std::to_string(min_mass_));
-  query.append("&MaxMass="); query.append(std::to_string(max_mass_));
+  query.append("&MaxPoints="); query.append(std::to_string(attributes_.max_points));
+  query.append("&MinMass="); query.append(std::to_string(attributes_.min_mass));
+  query.append("&MaxMass="); query.append(std::to_string(attributes_.max_mass));
   query.append("&CalibrationCount="); query.append(std::to_string(calibration_count_));
 
   return query;

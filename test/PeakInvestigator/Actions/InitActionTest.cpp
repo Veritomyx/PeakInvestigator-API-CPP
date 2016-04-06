@@ -41,7 +41,12 @@ using namespace Veritomyx::PeakInvestigator;
 
 TEST(InitActionTest, QueryString)
 {
-  InitAction action("username", "password", 1234, "1.2", 10, 12345, 100, 2000);
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+
+  InitAction action("username", "password", 1234, "1.2", 10, attributes);
 
   ASSERT_STREQ("Version=3.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&CalibrationCount=0",
                 action.buildQuery().c_str());
@@ -49,7 +54,12 @@ TEST(InitActionTest, QueryString)
 
 TEST(InitActionTest, QueryString_Pointer)
 {
-  BaseAction* action = new InitAction("username", "password", 1234, "1.2", 10, 12345, 100, 2000);
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+
+  BaseAction* action = new InitAction("username", "password", 1234, "1.2", 10, attributes);
 
   ASSERT_STREQ("Version=3.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&CalibrationCount=0",
                 action->buildQuery().c_str());
@@ -62,7 +72,12 @@ TEST(InitActionTest, QueryString_Pointer)
 //                                                                                                 {\"Instrument\":\"IonTrap\", \"RTO\":\"RTO-24\", \"Cost\":32.59}]}"
 TEST(InitActionTest, ExampleResponse)
 {
-  InitAction action("username", "password", 1234, "1.2", 10, 12345, 100, 2000);
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+
+  InitAction action("username", "password", 1234, "1.2", 10, attributes);
   action.processResponse(InitAction::EXAMPLE_RESPONSE);
 
   ASSERT_STREQ("V-504.1551", action.getJob().c_str());
