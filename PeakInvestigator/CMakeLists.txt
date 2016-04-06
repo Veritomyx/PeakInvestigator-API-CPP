@@ -34,6 +34,9 @@ SET(PEAKINVESTIGATOR_HEADERS
     PeakInvestigatorSaaS.h
     AbstractProgress.h
     TarFile.h
+)
+
+SET(PEAKINVESTIGATOR_ACTIONS
     Actions/BaseAction.h
     Actions/PiVersionsAction.h
     Actions/InitAction.h
@@ -48,8 +51,9 @@ SET(CMAKE_CXX_VISIBILITY_PRESET hidden)
 SET(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
 ADD_LIBRARY(PeakInvestigatorSaaS SHARED
-                ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS}
+                ${PEAKINVESTIGATOR_SOURCES} ${PEAKINVESTIGATOR_HEADERS} ${PEAKINVESTIGATOR_ACTIONS}
 )
+
 GENERATE_EXPORT_HEADER(PeakInvestigatorSaaS EXPORT_FILE_NAME PeakInvestigatorSaaS_export.h)
 set_property(TARGET PeakInvestigatorSaaS PROPERTY VERSION ${PeakInvestigatorSaaS_VERSION})
 set_property(TARGET PeakInvestigatorSaaS PROPERTY SOVERSION 0)
@@ -77,6 +81,7 @@ INSTALL(TARGETS PeakInvestigatorSaaS
 )
 
 INSTALL(FILES ${PEAKINVESTIGATOR_HEADERS} DESTINATION "${INSTALL_INCLUDE_DIR}/PeakInvestigator" COMPONENT Devel)
+INSTALL(FILES ${PEAKINVESTIGATOR_ACTIONS} DESTINATION "${INSTALL_INCLUDE_DIR}/PeakInvestigator/Actions" COMPONENT Devel)
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
