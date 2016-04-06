@@ -51,11 +51,18 @@ accomplished with the following code:
 #include <PeakInvestigator/Actions/PiVersionsAction.h>
 
 ...
+
 PiVersionsAction action("username", "password");
 PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
 std::string response = service.executeAction(&action);
 action.processResponse(response);
 
 std::string currentVersion = action.getCurrentVersion();
+
+...
 ```
 
+## Additional information
+
+For more information, including additional help with building and using the PeakInvestigtorSaaS library, contact 
+support@veritomyx.com.
