@@ -88,4 +88,6 @@ TEST(InitActionTest, ExampleResponse)
   ASSERT_EQ(27.60, estimated_costs.forInstrument("TOF").getCost("RTO-24"));
   ASSERT_EQ(36.22, estimated_costs.forInstrument("Orbitrap").getCost("RTO-24"));
   ASSERT_EQ(32.59, estimated_costs.forInstrument("IonTrap").getCost("RTO-24"));
+  ASSERT_EQ(36.22, estimated_costs.getMaximumCost("RTO-24"));
+  ASSERT_THROW(estimated_costs.getMaximumCost("RTO-8"), std::invalid_argument);
 }

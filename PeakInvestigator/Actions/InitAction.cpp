@@ -172,6 +172,21 @@ std::list<std::string> EstimatedCosts::getInstruments() const
   return instruments;
 }
 
+double EstimatedCosts::getMaximumCost(std::string RTO) const
+{
+  double maxCost = 0.0;
+
+  std::map<std::string, ResponseTimeCosts>::const_iterator iter;
+  for(iter = begin(); iter != end(); ++iter)
+  {
+    ResponseTimeCosts costs = iter->second;
+    double cost = costs.getCost(RTO);
+    maxCost = std::max(maxCost, cost);
+  }
+
+  return maxCost;
+}
+
 ResponseTimeCosts EstimatedCosts::forInstrument(std::string instrument) const
 {
   EstimatedCosts::const_iterator iter = find(instrument);

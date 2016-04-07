@@ -63,6 +63,7 @@ namespace Veritomyx
     {
       public:
         std::list<std::string> getInstruments() const;
+        double getMaximumCost(std::string RTO) const;
 
         ResponseTimeCosts forInstrument(std::string) const;
     };
