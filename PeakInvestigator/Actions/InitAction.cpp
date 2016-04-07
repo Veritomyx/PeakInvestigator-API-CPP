@@ -159,6 +159,19 @@ double ResponseTimeCosts::getCost(std::string responseTimeObjective) const
   return iter->second;
 }
 
+std::list<std::string> EstimatedCosts::getInstruments() const
+{
+  std::list<std::string> instruments;
+
+  std::map<std::string, ResponseTimeCosts>::const_iterator iter;
+  for (iter = begin(); iter != end(); ++iter)
+  {
+    instruments.push_back(iter->first);
+  }
+
+  return instruments;
+}
+
 ResponseTimeCosts EstimatedCosts::forInstrument(std::string instrument) const
 {
   EstimatedCosts::const_iterator iter = find(instrument);

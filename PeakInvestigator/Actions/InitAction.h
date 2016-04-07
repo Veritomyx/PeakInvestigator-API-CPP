@@ -62,6 +62,8 @@ namespace Veritomyx
     class PEAKINVESTIGATORSAAS_EXPORT EstimatedCosts : public std::map<std::string, ResponseTimeCosts>
     {
       public:
+        std::list<std::string> getInstruments() const;
+
         ResponseTimeCosts forInstrument(std::string) const;
     };
 
