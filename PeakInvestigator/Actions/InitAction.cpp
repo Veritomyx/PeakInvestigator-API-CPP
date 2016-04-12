@@ -135,7 +135,7 @@ int InitAction::getErrorCode()
   return BaseAction::getErrorCode();
 }
 
-std::list<std::string> ResponseTimeCosts::getRTOs()
+std::list<std::string> ResponseTimeCosts::getRTOs() const
 {
   std::list<std::string> RTOs;
 

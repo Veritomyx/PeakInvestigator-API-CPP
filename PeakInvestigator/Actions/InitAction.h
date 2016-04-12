@@ -54,8 +54,7 @@ namespace Veritomyx
     {
 
       public:
-        std::list<std::string> getRTOs();
-
+        std::list<std::string> getRTOs() const;
         double getCost(std::string responseTimeObjective) const;
     };
 
