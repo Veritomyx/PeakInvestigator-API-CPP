@@ -157,7 +157,17 @@ struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 }
 #endif
 
-std::vector<std::string> BaseAction::getStringArrayAttribute(std::string attribute) const
+std::list<std::string> BaseAction::getStringListAttribute(std::string attribute) const
+{
+  Json::Value array = response_object_->get(attribute, Json::nullValue);
+  std::list<std::string> values;
+  for (unsigned int i = 0; i < array.size(); i++) {
+    values.push_back(array[i].asString());
+  }
+  return values;
+}
+
+std::vector<std::string> BaseAction::getStringVectorAttribute(std::string attribute) const
 {
   Json::Value array = response_object_->get(attribute, Json::nullValue);
   std::vector<std::string> values;

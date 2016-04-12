@@ -39,6 +39,7 @@
 
 #include <ctime>
 
+#include <list>
 #include <map>
 #include <string>
 #include <vector>
@@ -99,7 +100,8 @@ namespace Veritomyx
         struct tm getDateTimeAttribute(std::string attribute = "Datetime") const;
 #endif
 
-        std::vector<std::string> getStringArrayAttribute(std::string attribute) const;
+        std::list<std::string> getStringListAttribute(std::string attribute) const;
+        std::vector<std::string> getStringVectorAttribute(std::string attribute) const;
 
     };
 
