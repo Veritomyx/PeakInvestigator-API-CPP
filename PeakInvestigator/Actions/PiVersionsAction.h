@@ -65,6 +65,7 @@ namespace Veritomyx
 
         std::string getLastUsedVersion();
 
+        std::list<std::string> getVersionsList();
         std::vector<std::string> getVersions();
 
         std::string getErrorMessage();

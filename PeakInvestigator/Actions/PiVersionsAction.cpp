@@ -72,10 +72,16 @@ std::string PiVersionsAction::getLastUsedVersion()
   return getStringAttribute("LastUsed");
 }
 
+std::list<std::string> PiVersionsAction::getVersionsList()
+{
+  preCheck();
+  return getStringListAttribute("Versions");
+}
+
 std::vector<std::string> PiVersionsAction::getVersions()
 {
   preCheck();
-  return getStringArrayAttribute("Versions");
+  return getStringVectorAttribute("Versions");
 }
 
 std::string PiVersionsAction::getErrorMessage()
