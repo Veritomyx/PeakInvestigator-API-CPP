@@ -45,10 +45,57 @@ TEST(InitActionTest, QueryString)
   attributes.max_points = 12345;
   attributes.min_mass = 100;
   attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
 
   InitAction action("username", "password", 1234, "1.2", 10, attributes);
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&CalibrationCount=0",
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
+                action.buildQuery().c_str());
+}
+
+TEST(InitActionTest, QueryString_withCalibration)
+{
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
+
+  InitAction action("username", "password", 1234, "1.2", 10, attributes, 1);
+
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
+                action.buildQuery().c_str());
+}
+
+TEST(InitActionTest, QueryString_withClient)
+{
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
+
+  InitAction action("username", "password", 1234, "1.2", 10, attributes, 0, "Testing");
+
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
+                action.buildQuery().c_str());
+}
+
+TEST(InitActionTest, QueryString_withCalibrationAndClientKey)
+{
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
+
+  InitAction action("username", "password", 1234, "1.2", 10, attributes, 1, "Testing");
+
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
                 action.buildQuery().c_str());
 }
 
@@ -58,10 +105,12 @@ TEST(InitActionTest, QueryString_Pointer)
   attributes.max_points = 12345;
   attributes.min_mass = 100;
   attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
 
   BaseAction* action = new InitAction("username", "password", 1234, "1.2", 10, attributes);
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&CalibrationCount=0",
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
                 action->buildQuery().c_str());
 
   delete action;

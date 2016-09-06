@@ -69,9 +69,11 @@ namespace Veritomyx
 
     struct PEAKINVESTIGATORSAAS_EXPORT JobAttributes
     {
+        int max_points;
         int min_mass;
         int max_mass;
-        int max_points;
+        int start_mass;
+        int end_mass;
     };
 
     class PEAKINVESTIGATORSAAS_EXPORT InitAction : public BaseAction
@@ -81,8 +83,9 @@ namespace Veritomyx
         int project_id_;
         std::string version_of_PI_;
         int scan_count_;
-        JobAttributes attributes_;
         int calibration_count_;
+        JobAttributes attributes_;
+        std::string client_key_;
         EstimatedCosts estimated_costs_;
 
       public:
@@ -90,7 +93,7 @@ namespace Veritomyx
 
         InitAction(std::string user, std::string code,
                    int project_id, std::string version_of_PI, int scan_count,
-                   const JobAttributes& attributes, int calibration_count = 0);
+                   const JobAttributes& attributes, int calibration_count = 0, std::string client_key = "");
 
         std::string buildQuery() const;
 
