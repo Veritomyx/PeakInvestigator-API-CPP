@@ -43,7 +43,7 @@ TEST(PrepActionTest, QueryString)
 {
   PrepAction action("username", "password", 1234, "example.tar");
 
-  ASSERT_STREQ("Version=3.4&User=username&Code=password&Action=PREP&ID=1234&File=example.tar",
+  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=PREP&ID=1234&File=example.tar",
                action.buildQuery().c_str());
 }
 

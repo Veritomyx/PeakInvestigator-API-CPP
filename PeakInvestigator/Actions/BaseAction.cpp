@@ -46,7 +46,7 @@ char *strptime(const char *buf, const char *fmt, struct tm *tm);
 
 using namespace Veritomyx::PeakInvestigator;
 
-const std::string BaseAction::VERSION_OF_API("3.4");
+const std::string BaseAction::VERSION_OF_API("4.0");
 const std::string BaseAction::PARSE_DATE_FORMAT("%Y-%m-%d %H:%M:%S");
 
 BaseAction::BaseAction(std::string user, std::string code, std::string action)
