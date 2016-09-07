@@ -35,12 +35,13 @@
 //
 
 #include <stdexcept>
+#include <json/json.h>
 
 #include "SftpAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
 
-const std::string SftpAction::EXAMPLE_RESPONSE("{\"Action\":\"SFTP\",\"Host\":\"peakinvestigator.veritomyx.com\",\"Port\":22022,\"Directory\":\"/files/\",\"Login\":\"SFTPUSER\",\"Password\":\"SFTPPASSWORD\"}");
+const std::string SftpAction::EXAMPLE_RESPONSE("{\"Action\":\"SFTP\", \"Host\":\"peakinvestigator.veritomyx.com\", \"Port\":22022, \"Directory\":\"/files\", \"Login\":\"Vt504\", \"Password\":\"0UtnWMvzoi2jF4BQ\", \"Fingerprints\":[ {\"Signature\":\"DSA\",\"Algorithm\":\"MD5\",\"Hash\":\"96:bd:da:62:5a:53:1a:2f:82:87:65:7f:c0:45:71:94\"}, {\"Signature\":\"DSA\",\"Algorithm\":\"SHA256\",\"Hash\":\"b9SOs40umHMywBa2GtdsOhr/wgP1L6nfXWugjRrJTaM\"}, {\"Signature\":\"ECDSA\",\"Algorithm\":\"MD5\",\"Hash\":\"5c:6f:c7:c7:79:c0:76:90:4d:3a:a1:7a:81:0e:0a:57\"}, {\"Signature\":\"ECDSA\",\"Algorithm\":\"SHA256\",\"Hash\":\"d2HXgeUSmWN+gq+9V7Wad5xWaCxk+mh45F81K951MCU\"}, {\"Signature\":\"RSA\",\"Algorithm\":\"MD5\",\"Hash\":\"d2:be:b8:2e:3c:be:84:e4:a3:0a:c8:42:5c:6b:39:4e\"}, {\"Signature\":\"RSA\",\"Algorithm\":\"SHA256\",\"Hash\":\"QBsg8ejj4gZun4AWd4WBTJw89ftcLR9x/dZoG223srg\"}]}");
 
 SftpAction::SftpAction(std::string user, std::string code, int project_ID) :
   BaseAction(user, code, "SFTP")
@@ -94,6 +95,28 @@ std::string SftpAction::getSftpPassword()
   return getStringAttribute("Password");
 }
 
+SftpFingerprints SftpAction::getFingerprints()
+{
+  if (fingerprints_.size() > 0) {
+    return fingerprints_;
+  }
+
+  preCheck();
+  Json::Value fingerprints = response_object_->get("Fingerprints", Json::nullValue);
+  for (unsigned int i = 0; i < fingerprints.size(); i++)
+  {
+    Json::Value fingerprint = fingerprints[i];
+    std::string signature = fingerprint.get("Signature", Json::nullValue).asString();
+    std::string algorithm = fingerprint.get("Algorithm", Json::nullValue).asString();
+    std::string hash = fingerprint.get("Hash", Json::nullValue).asString();
+
+    std::string key = signature + "-" + algorithm;
+    fingerprints_[key] = hash;
+  }
+
+  return fingerprints_;
+}
+
 std::string SftpAction::getErrorMessage()
 {
   preCheck();
@@ -104,4 +127,22 @@ int SftpAction::getErrorCode()
 {
   preCheck();
   return BaseAction::getErrorCode();
+}
+
+std::vector<std::string> SftpFingerprints::getAlgorithms()
+{
+  std::vector<std::string> algorithms;
+
+  std::map<std::string, std::string>::const_iterator iter;
+  for (iter = begin(); iter != end(); ++iter)
+  {
+    algorithms.push_back(iter->first);
+  }
+
+  return algorithms;
+}
+
+std::string SftpFingerprints::getHash(std::string algorithm)
+{
+  return (*this)[algorithm];
 }

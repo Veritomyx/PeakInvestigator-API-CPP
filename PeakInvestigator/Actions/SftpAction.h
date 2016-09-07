@@ -38,6 +38,8 @@
 #define SFTP_ACTION_H
 
 #include <string>
+#include <map>
+#include <vector>
 
 #include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
 #include "BaseAction.h"
@@ -48,10 +50,17 @@ namespace Veritomyx
   namespace PeakInvestigator
   {
 
+    class PEAKINVESTIGATORSAAS_EXPORT SftpFingerprints : public std::map<std::string, std::string> {
+      public:
+        std::vector<std::string> getAlgorithms();
+        std::string getHash(std::string algorithm);
+    };
+
     class PEAKINVESTIGATORSAAS_EXPORT SftpAction : public BaseAction
     {
       private:
         int project_ID_;
+        SftpFingerprints fingerprints_;
 
       public:
         static const std::string EXAMPLE_RESPONSE;
@@ -72,6 +81,8 @@ namespace Veritomyx
         virtual std::string getSftpUsername();
 
         virtual std::string getSftpPassword();
+
+        virtual SftpFingerprints getFingerprints();
 
         std::string getErrorMessage();
 

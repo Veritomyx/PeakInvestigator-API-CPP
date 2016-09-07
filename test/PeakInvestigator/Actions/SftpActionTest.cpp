@@ -47,7 +47,6 @@ TEST(SftpActionTest, QueryString)
                action.buildQuery().c_str());
 }
 
-// "{\"Action\":\"SFTP\",\"Host\":\"peakinvestigator.veritomyx.com\",\"Port\":22022,\"Directory\":\"/files/\",\"Login\":\"SFTPUSER\",\"Password\":\"SFTPPASSWORD\"}"
 TEST(SftpActionTest, ExampleResponse)
 {
   SftpAction action("username", "password", 1234);
@@ -55,7 +54,11 @@ TEST(SftpActionTest, ExampleResponse)
 
   ASSERT_STREQ("peakinvestigator.veritomyx.com", action.getHost().c_str());
   ASSERT_EQ(22022, action.getPort());
-  ASSERT_STREQ("/files/", action.getDirectory().c_str());
-  ASSERT_STREQ("SFTPUSER", action.getSftpUsername().c_str());
-  ASSERT_STREQ("SFTPPASSWORD", action.getSftpPassword().c_str());
+  ASSERT_STREQ("/files", action.getDirectory().c_str());
+  ASSERT_STREQ("Vt504", action.getSftpUsername().c_str());
+  ASSERT_STREQ("0UtnWMvzoi2jF4BQ", action.getSftpPassword().c_str());
+
+  SftpFingerprints fingerprints = action.getFingerprints();
+  ASSERT_STREQ("96:bd:da:62:5a:53:1a:2f:82:87:65:7f:c0:45:71:94", fingerprints.getHash("DSA-MD5").c_str());
+  ASSERT_STREQ("b9SOs40umHMywBa2GtdsOhr/wgP1L6nfXWugjRrJTaM", fingerprints.getHash("DSA-SHA256").c_str());
 }
