@@ -87,7 +87,15 @@ public:
     MOCK_METHOD0(getDirectory, std::string());
     MOCK_METHOD0(getSftpUsername, std::string());
     MOCK_METHOD0(getSftpPassword, std::string());
+    MOCK_METHOD0(getFingerprints, SftpFingerprints());
 };
+
+SftpFingerprints generateFingerprints()
+{
+  SftpFingerprints fingerprints;
+  fingerprints["RSA-MD5"] = SFTP_HASH;
+  return fingerprints;
+}
 
 class ProgressTracker : public AbstractProgress
 {
@@ -121,6 +129,8 @@ TEST(PeakInvestigatorSaaS, uploadFile_OK)
       .WillRepeatedly(Return(SFTP_PASSWORD));
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
+  EXPECT_CALL(action, getFingerprints())
+      .WillOnce(Return(generateFingerprints()));
 
   ASSERT_NO_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE, &progress));
   ASSERT_EQ(progress.getTotal(), progress.getProgress());
@@ -140,6 +150,8 @@ TEST(PeakInvestigatorSaaS, downloadFile_OK)
       .WillRepeatedly(Return(SFTP_PASSWORD));
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
+  EXPECT_CALL(action, getFingerprints())
+      .WillOnce(Return(generateFingerprints()));
 
   ASSERT_NO_THROW(service.downloadFile(action, REMOTE_FILE, REMOTE_FILE, &progress));
   ASSERT_EQ(progress.getTotal(), progress.getProgress());
@@ -186,6 +198,26 @@ TEST(PeakInvestigatorSaaS, uploadFile_BadCredentials)
       .WillRepeatedly(Return("BadUsername"));
   EXPECT_CALL(action, getSftpPassword())
       .WillRepeatedly(Return("BadPassword"));
+  EXPECT_CALL(action, getPort())
+      .WillOnce(Return(SFTP_PORT));
+  EXPECT_CALL(action, getFingerprints())
+      .WillOnce(Return(generateFingerprints()));
+
+  ASSERT_THROW(service.uploadFile(action, LOCAL_FILE, LOCAL_FILE),
+               std::runtime_error);
+}
+
+TEST(PeakInvestigatorSaaS, uploadFile_BadHash)
+{
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  MockSftpAction action;
+
+  EXPECT_CALL(action, getHost())
+      .WillOnce(Return("peakinvestigator.veritomyx.com"));
+  EXPECT_CALL(action, getSftpUsername())
+      .WillRepeatedly(Return(SFTP_USERNAME));
+  EXPECT_CALL(action, getSftpPassword())
+      .WillRepeatedly(Return(SFTP_PASSWORD));
   EXPECT_CALL(action, getPort())
       .WillOnce(Return(SFTP_PORT));
 

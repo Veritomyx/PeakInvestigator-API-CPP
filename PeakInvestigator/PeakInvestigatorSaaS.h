@@ -72,7 +72,7 @@ namespace Veritomyx
       private:
 
         void establishSSHSession_(SftpAction &action);
-        void confirmSSHServerIdentity_();
+        void confirmSSHServerIdentity_(SftpAction &action);
         void authenticateUser_(SftpAction &action);
         void establishSFTPSession_();
         void disconnect_();

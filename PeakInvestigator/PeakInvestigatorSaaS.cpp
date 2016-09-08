@@ -35,6 +35,7 @@
 //
 
 #include <stdexcept>
+#include <sstream>
 
 #include <curl/curl.h>
 #include <libssh2.h>
@@ -91,6 +92,7 @@
 #define ESTABLISH_SFTP_SESSION    16
 
 #define BUFFER_SIZE 131072
+#define KEY_SIZE 16
 #define TIMEOUT 10000
 #define LOG *logger_
 
@@ -293,12 +295,28 @@ void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
     throw std::runtime_error(error);
   }
 
+  confirmSSHServerIdentity_(action);
+
   state_ |= ESTABLISH_SSH_SESSION;
 }
 
-void PeakInvestigatorSaaS::confirmSSHServerIdentity_()
+void PeakInvestigatorSaaS::confirmSSHServerIdentity_(SftpAction& action)
 {
+  char hex[3];
+  const char* hash = libssh2_hostkey_hash(ssh_session_, LIBSSH2_HOSTKEY_HASH_MD5);
+  std::string hashString(KEY_SIZE * 3 - 1, ':');
+  for(int i = 0; i < KEY_SIZE; i++) {
+    snprintf(hex, 3, "%02x", static_cast<unsigned char>(hash[i]));
+    hashString.replace(3 * i, 2, hex);
+  }
 
+  std::string fingerprint = action.getFingerprints().getHash("RSA-MD5");
+  if (fingerprint.compare(hashString) != 0) {
+    std::stringstream stream;
+    stream << "Unable to confirm SSH server identity. Expected: " << fingerprint;
+    stream << " , found: " << hashString;
+    throw std::runtime_error(stream.str());
+  }
 }
 
 void PeakInvestigatorSaaS::authenticateUser_(SftpAction& action)
