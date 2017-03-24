@@ -5,9 +5,9 @@ SET(PeakInvestigatorSaaS_VERSION 0.9.0)
 
 INCLUDE(CTest)
 INCLUDE(cmake/InstallLocation.cmake)
+INCLUDE(cmake/FindLibSSH2.cmake)
 
 FIND_PACKAGE(CURL REQUIRED)
-FIND_PACKAGE(Libssh2 REQUIRED)
 
 ADD_SUBDIRECTORY(thirdparty)
 ADD_SUBDIRECTORY(PeakInvestigator)

@@ -63,12 +63,14 @@ set_property(TARGET PeakInvestigatorSaaS APPEND PROPERTY COMPATIBLE_INTERFACE_ST
 INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp
     ${CMAKE_SOURCE_DIR}/thirdparty/tarball
+    ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/zlib/include
     ${CURL_INCLUDE_DIRS}
+    ${LIBSSH2_INCLUDE_DIR}
 )
 
-TARGET_LINK_LIBRARIES(PeakInvestigatorSaaS PRIVATE jsoncpp tarball zlib ${CURL_LIBRARIES} Libssh2::libssh2)
+TARGET_LINK_LIBRARIES(PeakInvestigatorSaaS PRIVATE jsoncpp tarball zlib ${CURL_LIBRARIES} ${LIBSSH2_LIBRARY})
 
 LIST(APPEND PEAKINVESTIGATOR_HEADERS "${CMAKE_CURRENT_BINARY_DIR}/PeakInvestigatorSaaS_export.h")
 
