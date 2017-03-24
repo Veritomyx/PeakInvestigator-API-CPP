@@ -42,7 +42,7 @@ using namespace Veritomyx::PeakInvestigator;
 
 const std::string StatusAction::EXAMPLE_RESPONSE_PREPARING("{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Preparing\", \"Datetime\":\"2016-02-03 18:18:12\"}");
 const std::string StatusAction::EXAMPLE_RESPONSE_RUNNING("{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Running\", \"Datetime\":\"2016-02-03 18:25:09\"}");
-const std::string StatusAction::EXAMPLE_RESPONSE_DONE("{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Done\", \"Datetime\":\"2016-02-03 18:31:05\", \"ScansInput\":3, \"ScansComplete\":3, \"ActualCost\":0.36, \"JobLogFile\":\"\\/files\\/P-504.5148\\/P-504.5148.log.txt\", \"ResultsFile\":\"\\/files\\/P-504.5148\\/P-504.5148.mass_list.tar\"}");
+const std::string StatusAction::EXAMPLE_RESPONSE_DONE("{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Done\", \"Datetime\":\"2016-02-03 18:31:05\", \"ScansInput\":3, \"ScansComplete\":3, \"ActualCost\":0.36, \"ResultFiles\":[\"Log\",\"MassList\"], \"ResultFilePaths\":{\"Log\":\"\\/files\\/P-504.5148\\/P-504.5148.log.txt\", \"MassList\":\"\\/files\\/P-504.5148\\/P-504.5148.mass_list.tar\"}}");
 const std::string StatusAction::EXAMPLE_RESPONSE_DELETED("{\"Action\":\"STATUS\", \"Job\":\"P-504.1463\", \"Status\":\"Deleted\", \"Datetime\":\"2016-02-03 18:36:05\"}");
 
 StatusAction::StatusAction(std::string user, std::string code, std::string job) :

@@ -92,8 +92,8 @@ TEST(StatusActionTest, ExampleResponse_Running)
 #endif
 }
 
-// "{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Done\", \"Datetime\":\"2016-02-03 18:31:05\", \"ScansInput\":3, \"ScansComplete\":3, \"ActualCost\":0.36,
-//                                     \"JobLogFile\":\"\\/files\\/P-504.5148\\/P-504.5148.log.txt\", \"ResultsFile\":\"\\/files\\/P-504.5148\\/P-504.5148.mass_list.tar\"}"
+// {"Action":"STATUS", "Job":"P-504.5148", "Status":"Done", "Datetime":"2016-02-03 18:31:05", "ScansInput":3, "ScansComplete":3, "ActualCost":0.36, "ResultFiles":["Log","MassList"],
+// "ResultFilePaths":{"Log":"\/files\/P-504.5148\/P-504.5148.log.txt", "MassList":"\/files\/P-504.5148\/P-504.5148.mass_list.tar"}}
 TEST(StatusActionTest, ExampleResponse_Done)
 {
   StatusAction action("username", "password", "P-1234");
