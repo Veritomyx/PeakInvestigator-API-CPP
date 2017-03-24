@@ -36,6 +36,7 @@
 
 #include <stdexcept>
 
+#include <json/json.h>
 #include "StatusAction.h"
 
 using namespace Veritomyx::PeakInvestigator;
@@ -129,13 +130,15 @@ double StatusAction::getActualCost()
 std::string StatusAction::getLogFilename()
 {
   preCheck();
-  return getStringAttribute("JobLogFile");
+  Json::Value results_file_paths = response_object_->get("ResultFilePaths", Json::nullValue);
+  return results_file_paths.get("Log", Json::nullValue).asString();
 }
 
 std::string StatusAction::getResultsFilename()
 {
   preCheck();
-  return getStringAttribute("ResultsFile");
+  Json::Value results_file_paths = response_object_->get("ResultFilePaths", Json::nullValue);
+  return results_file_paths.get("MassList", Json::nullValue).asString();
 }
 
 std::string StatusAction::getErrorMessage()
