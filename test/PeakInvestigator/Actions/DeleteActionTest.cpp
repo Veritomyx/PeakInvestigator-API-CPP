@@ -45,7 +45,7 @@ TEST(DeleteActionTest, QueryString)
 {
   DeleteAction action("username", "password", "P-1234");
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=DELETE&Job=P-1234",
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=DELETE&Job=P-1234",
                action.buildQuery().c_str());
 }
 

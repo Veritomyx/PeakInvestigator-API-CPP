@@ -43,7 +43,7 @@ TEST(SftpActionTest, QueryString)
 {
   SftpAction action("username", "password", 1234);
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=SFTP&ID=1234",
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=SFTP&ID=1234",
                action.buildQuery().c_str());
 }
 

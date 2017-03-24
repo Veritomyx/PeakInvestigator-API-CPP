@@ -43,7 +43,7 @@ TEST(RunActionTest, QueryString_WithoutCalibration)
 {
   RunAction action("username", "password", "P-1234", "RTO-24", "example.tar");
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar",
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar",
                action.buildQuery().c_str());
 }
 
@@ -51,7 +51,7 @@ TEST(RunActionTest, QueryString_WithCalibration)
 {
   RunAction action("username", "password", "P-1234", "RTO-24", "example.tar", "calib.tar");
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar&CalibrationFile=calib.tar",
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar&CalibrationFile=calib.tar",
                action.buildQuery().c_str());
 }
 

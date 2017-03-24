@@ -43,7 +43,7 @@ TEST(PiVersionsActionTest, QueryString)
 {
   PiVersionsAction action("username", "password");
 
-  ASSERT_STREQ("Version=4.0&User=username&Code=password&Action=PI_VERSIONS",
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=PI_VERSIONS",
                action.buildQuery().c_str());
 }
 
