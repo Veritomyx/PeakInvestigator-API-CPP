@@ -178,7 +178,7 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
 
   retval = curl_easy_perform(curl);
 
-  delete postData;
+  delete[] postData;
   if(retval != CURLE_OK)
   {
     throw std::runtime_error("Problem with CURL");
