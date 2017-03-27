@@ -49,6 +49,11 @@ using namespace Veritomyx::PeakInvestigator;
 const std::string BaseAction::VERSION_OF_API("5.4");
 const std::string BaseAction::PARSE_DATE_FORMAT("%Y-%m-%d %H:%M:%S");
 
+BaseAction::BaseAction()
+{
+  response_object_ = new Json::Value();
+}
+
 BaseAction::BaseAction(std::string user, std::string code, std::string action)
 {
   user_ = user;

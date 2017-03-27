@@ -37,7 +37,11 @@
 #include <string>
 #include <PeakInvestigator/PeakInvestigatorSaaS.h>
 #include <PeakInvestigator/AbstractProgress.h>
+#include <PeakInvestigator/Actions/BaseAction.h>
 #include <PeakInvestigator/Actions/PiVersionsAction.h>
+#include <PeakInvestigator/Actions/InitAction.h>
+#include <PeakInvestigator/Actions/RunAction.h>
+#include <PeakInvestigator/Actions/SandboxAction.h>
 #include <PeakInvestigator/Actions/SftpAction.h>
 
 #include "PeakInvestigatorSaaSTest_config.h"
@@ -61,6 +65,37 @@ TEST(PeakInvestigatorSaaS, executeAction_Ok)
 
   ASSERT_TRUE(action.isReady("PI_VERSIONS"));
   ASSERT_FALSE(action.hasError());
+}
+
+TEST(PeakInvestigatorSaaS, initAndRun)
+{
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
+
+  PeakInvestigatorSaaS service("peakinvestigator.veritomyx.com");
+  InitAction init_action(PI_USERNAME, PI_PASSWORD, PI_PROJECT, "2.0", 10, attributes);
+  BaseAction* action = new SandboxAction(&init_action, 0);
+
+  std::string response = service.executeAction(action);
+  delete action;
+  init_action.processResponse(response);
+
+  ASSERT_TRUE(init_action.isReady("INIT"));
+  ASSERT_FALSE(init_action.hasError());
+
+  RunAction run_action(PI_USERNAME, PI_PASSWORD, init_action.getJob(), "RTO-24", "example.tar");
+  action = new SandboxAction(&run_action, 0);
+
+  response = service.executeAction(action);
+  delete action;
+  run_action.processResponse(response);
+
+  ASSERT_TRUE(run_action.isReady("RUN"));
+  ASSERT_STREQ(init_action.getJob().c_str(), run_action.getJob().c_str());
 }
 #endif
 

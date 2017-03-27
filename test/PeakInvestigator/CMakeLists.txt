@@ -1,4 +1,5 @@
 SET(ACTION_TEST_SOURCES
+    Actions/SandboxActionTest.cpp
     Actions/PiVersionsActionTest.cpp
     Actions/InitActionTest.cpp
     Actions/SftpActionTest.cpp

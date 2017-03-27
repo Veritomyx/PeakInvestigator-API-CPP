@@ -2,7 +2,7 @@
 //  PeakInvestigator-API -- C++ library for accessing the public API of
 //                              PeakInvestigator.
 // --------------------------------------------------------------------------
-// Copyright Veritomyx, Inc. 2016.
+// Copyright Veritomyx, Inc. 2017.
 //
 // This software is released under a three-clause BSD license:
 //  * Redistributions of source code must retain the above copyright
@@ -34,81 +34,39 @@
 //
 //
 
-#ifndef BASE_ACTION_H
-#define BASE_ACTION_H
+#include <PeakInvestigator/Actions/BaseAction.h>
+#include <PeakInvestigator/Actions/InitAction.h>
+#include <PeakInvestigator/Actions/RunAction.h>
+#include <PeakInvestigator/Actions/SandboxAction.h>
+#include "gtest/gtest.h"
 
-#include <ctime>
+using namespace Veritomyx::PeakInvestigator;
 
-#include <list>
-#include <map>
-#include <string>
-#include <vector>
-
-#include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
-
-namespace Json
+TEST(SandboxInitActionTest, QueryString)
 {
-  class Value;
+  JobAttributes attributes;
+  attributes.max_points = 12345;
+  attributes.min_mass = 100;
+  attributes.max_mass = 2000;
+  attributes.start_mass = 120;
+  attributes.end_mass = 1900;
+
+  InitAction init_action("username", "password", 1234, "1.2", 10, attributes);
+  BaseAction* action = new SandboxAction(&init_action, 3);
+
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&Sandbox=3",
+               action->buildQuery().c_str());
+
+  delete action;
 }
 
-namespace Veritomyx
+TEST(SandboxRunActionTest, QueryStringWithCalibration)
 {
+  RunAction run_action("username", "password", "P-1234", "RTO-24", "example.tar");
+  BaseAction* action = new SandboxAction(&run_action, "Done");
 
-  namespace PeakInvestigator
-  {
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar&Sandbox=Done",
+               action->buildQuery().c_str());
 
-    class PEAKINVESTIGATORSAAS_EXPORT BaseAction
-    {
-      private:
-
-        std::string user_;
-        std::string code_;
-        std::string action_;
-
-      protected:
-        Json::Value* response_object_;
-
-      public:
-        const static std::string VERSION_OF_API;
-        const static std::string PARSE_DATE_FORMAT;
-
-        BaseAction();
-
-        BaseAction(std::string user, std::string code, std::string action);
-
-        virtual ~BaseAction();
-
-        virtual std::string buildQuery() const;
-
-        void processResponse(const std::string response);
-
-        bool isReady(std::string action);
-
-        bool hasError();
-
-        virtual std::string getErrorMessage(void);
-
-        virtual int getErrorCode(void);
-
-        std::string getStringAttribute(std::string attribute) const;
-
-        int getIntAttribute(std::string attribute) const;
-
-        long getLongAttribute(std::string attribute) const;
-
-        double getDoubleAttribute(std::string attribute) const;
-
-#ifndef _WIN32
-        struct tm getDateTimeAttribute(std::string attribute = "Datetime") const;
-#endif
-
-        std::list<std::string> getStringListAttribute(std::string attribute) const;
-        std::vector<std::string> getStringVectorAttribute(std::string attribute) const;
-
-    };
-
-  }
-
+  delete action;
 }
-
-#endif // BASE_ACTION_H

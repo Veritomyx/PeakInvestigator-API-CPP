@@ -21,6 +21,7 @@ SET(PEAKINVESTIGATOR_SOURCES
     PeakInvestigatorSaaS.cpp
     TarFile.cpp
     Actions/BaseAction.cpp
+    Actions/SandboxAction.cpp
     Actions/PiVersionsAction.cpp
     Actions/InitAction.cpp
     Actions/SftpAction.cpp
@@ -38,6 +39,7 @@ SET(PEAKINVESTIGATOR_HEADERS
 
 SET(PEAKINVESTIGATOR_ACTIONS
     Actions/BaseAction.h
+    Actions/SandboxAction.h
     Actions/PiVersionsAction.h
     Actions/InitAction.h
     Actions/SftpAction.h

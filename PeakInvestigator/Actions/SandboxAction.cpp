@@ -2,7 +2,7 @@
 //  PeakInvestigator-API -- C++ library for accessing the public API of
 //                              PeakInvestigator.
 // --------------------------------------------------------------------------
-// Copyright Veritomyx, Inc. 2016.
+// Copyright Veritomyx, Inc. 2017.
 //
 // This software is released under a three-clause BSD license:
 //  * Redistributions of source code must retain the above copyright
@@ -34,81 +34,49 @@
 //
 //
 
-#ifndef BASE_ACTION_H
-#define BASE_ACTION_H
+#include "SandboxAction.h"
 
-#include <ctime>
+#include "InitAction.h"
 
-#include <list>
-#include <map>
-#include <string>
-#include <vector>
+using Veritomyx::PeakInvestigator::SandboxAction;
 
-#include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
-
-namespace Json
+SandboxAction::SandboxAction(BaseAction* action, int code) : BaseAction()
 {
-  class Value;
+  action_ = action;
+  value_.type = SandboxValue::INT;
+  value_.code = code;
+
 }
 
-namespace Veritomyx
+SandboxAction::SandboxAction(BaseAction* action, std::string error) : BaseAction()
 {
+  action_ = action;
+  value_.type = SandboxValue::STRING;
+  value_.error = error;
 
-  namespace PeakInvestigator
-  {
+}
 
-    class PEAKINVESTIGATORSAAS_EXPORT BaseAction
-    {
-      private:
+SandboxAction::~SandboxAction()
+{
+}
 
-        std::string user_;
-        std::string code_;
-        std::string action_;
+std::string SandboxAction::buildQuery() const {
+  std::string response = action_->buildQuery();
+  response.append("&Sandbox");
 
-      protected:
-        Json::Value* response_object_;
-
-      public:
-        const static std::string VERSION_OF_API;
-        const static std::string PARSE_DATE_FORMAT;
-
-        BaseAction();
-
-        BaseAction(std::string user, std::string code, std::string action);
-
-        virtual ~BaseAction();
-
-        virtual std::string buildQuery() const;
-
-        void processResponse(const std::string response);
-
-        bool isReady(std::string action);
-
-        bool hasError();
-
-        virtual std::string getErrorMessage(void);
-
-        virtual int getErrorCode(void);
-
-        std::string getStringAttribute(std::string attribute) const;
-
-        int getIntAttribute(std::string attribute) const;
-
-        long getLongAttribute(std::string attribute) const;
-
-        double getDoubleAttribute(std::string attribute) const;
-
-#ifndef _WIN32
-        struct tm getDateTimeAttribute(std::string attribute = "Datetime") const;
-#endif
-
-        std::list<std::string> getStringListAttribute(std::string attribute) const;
-        std::vector<std::string> getStringVectorAttribute(std::string attribute) const;
-
-    };
-
+  switch(value_.type) {
+  case SandboxValue::INT:
+    response.append("=");
+    response.append(std::to_string(value_.code));
+    break;
+  case SandboxValue::STRING:
+    response.append("=");
+    response.append(value_.error);
+    break;
+  case SandboxValue::NONE:
+  default:
+    break;
   }
 
+  return response;
 }
-
-#endif // BASE_ACTION_H
