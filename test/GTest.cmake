@@ -14,7 +14,8 @@ ENDIF()
 # Download and install GoogleTest
 ExternalProject_Add(
     gtest
-    GIT_REPOSITORY https://github.com/google/googletest.git
+    URL https://github.com/google/googletest/archive/release-1.8.0.tar.gz
+    URL_MD5 16877098823401d1bf2ed7891d7dce36
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/gtest
     # Disable install step
     CMAKE_ARGS ${GTEST_CMAKE_ARGS}
