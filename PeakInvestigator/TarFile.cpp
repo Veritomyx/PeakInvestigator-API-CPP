@@ -154,6 +154,12 @@ std::string TarFile::readNextFile(std::ostream& contents)
 
   long long size;
   std::sscanf(header.size, "%011llo", &size);
+
+  if (size == 0)
+  {
+    return header.name;
+  }
+
   char buffer[BUFFER_SIZE];
 
   // gzread doesn't necessarily stop reading
