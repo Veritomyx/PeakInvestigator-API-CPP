@@ -65,6 +65,7 @@ set_property(TARGET PeakInvestigatorSaaS APPEND PROPERTY COMPATIBLE_INTERFACE_ST
 INCLUDE_DIRECTORIES(
     ${CMAKE_SOURCE_DIR}/thirdparty/jsoncpp
     ${CMAKE_SOURCE_DIR}/thirdparty/tarball
+    ${CMAKE_SOURCE_DIR}/thirdparty/spdlog-0.13.0
     ${CMAKE_BINARY_DIR}
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CMAKE_BINARY_DIR}/zlib/include
