@@ -76,6 +76,8 @@
 #include "Actions/BaseAction.h"
 #include "Actions/SftpAction.h"
 
+#include <spdlog/spdlog.h>
+
 // states of connection for SFTP
 #define LIBRARY_UNINITIALIZED     0
 #define LIBRARY_INITIALIZED       1
@@ -94,7 +96,7 @@
 #define BUFFER_SIZE 131072
 #define KEY_SIZE 16
 #define TIMEOUT 10000
-#define LOG *logger_
+#define LOG_NAME "peakinvestigator"
 
 using namespace Veritomyx::PeakInvestigator;
 
@@ -112,7 +114,7 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
   path_ = path;
   agent_ = agent;
 
-  logger_ = &std::cout;
+  auto log = spdlog::stdout_color_mt(LOG_NAME);
 
   curl_global_init(CURL_GLOBAL_ALL);
 
@@ -148,6 +150,19 @@ PeakInvestigatorSaaS::~PeakInvestigatorSaaS()
   disconnect_();
   curl_global_cleanup();
   libssh2_exit();
+  spdlog::drop(LOG_NAME);
+}
+
+void PeakInvestigatorSaaS::setDebug(bool debug)
+{
+  if (debug)
+  {
+    spdlog::get(LOG_NAME)->set_level(spdlog::level::debug);
+  }
+  else
+  {
+    spdlog::get(LOG_NAME)->set_level(spdlog::level::info);
+  }
 }
 
 std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
@@ -273,7 +288,7 @@ void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFi
 
 void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
 {
-  LOG << "Trying to establish SSH session." << std::endl;
+  spdlog::get(LOG_NAME)->debug("Trying to establish SSH session.");
 
   socket_ = getConnectedSocket(action.getHost().c_str(),
                                 std::to_string(action.getPort()).c_str());
@@ -342,7 +357,8 @@ void PeakInvestigatorSaaS::establishSFTPSession_()
 
 void PeakInvestigatorSaaS::disconnect_()
 {
-  LOG << "Disconnecting. The current state is: " << state_ << std::endl;
+  spdlog::get(LOG_NAME)->debug("Disconnecting. The current state is: {}.", state_);
+
   switch(state_)
   {
   case SFTP_SESSION_ESTABLISHED:
@@ -365,7 +381,7 @@ void PeakInvestigatorSaaS::disconnect_()
   case LIBRARY_INITIALIZED:
     break;
   default:
-    LOG << "Problem in disconnect. State: " << state_ << std::endl;
+    spdlog::get(LOG_NAME)->error("Problem in disconnect. State: {}.", state_);
   }
 
 }
@@ -426,7 +442,7 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
   int written, transferred = 0;
   char buffer[BUFFER_SIZE];
 
-  LOG << "Uploading file...\n";
+  spdlog::get(LOG_NAME)->debug("Uploading file...");
 
   while(!file.eof())
   {
@@ -458,7 +474,7 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
 
   }
 
-  LOG << "Finished.\n";
+  spdlog::get(LOG_NAME)->debug("....finished.");
 
 }
 
@@ -467,7 +483,7 @@ void PeakInvestigatorSaaS::downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HAND
   int read, transferred = 0;
   char buffer[BUFFER_SIZE];
 
-  LOG << "Downloading file...\n";
+  spdlog::get(LOG_NAME)->debug("Downloading file...");
 
   do
   {
@@ -497,5 +513,5 @@ void PeakInvestigatorSaaS::downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HAND
 
   } while(true);
 
-  LOG << "Finished.\n";
+  spdlog::get(LOG_NAME)->debug("Finished.");
 }

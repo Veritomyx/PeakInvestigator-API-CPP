@@ -64,6 +64,8 @@ namespace Veritomyx
         PeakInvestigatorSaaS(std::string hostname, std::string path = "/api/", std::string agent = "libcurl-agent/1.0");
         ~PeakInvestigatorSaaS();
 
+        void setDebug(bool debug = true);
+
         std::string executeAction(BaseAction* action);
 
         void uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename, AbstractProgress* progress = NULL);
@@ -82,8 +84,6 @@ namespace Veritomyx
 
         void uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
         void downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress);
-
-        std::ostream* logger_;
 
         std::string hostname_;
         std::string path_;
