@@ -34,6 +34,7 @@
 //
 //
 
+#include <algorithm>
 #include <stdexcept>
 #include <iostream>
 

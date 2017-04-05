@@ -131,7 +131,7 @@ PeakInvestigatorSaaS::PeakInvestigatorSaaS(std::string hostname, std::string pat
   err = WSAStartup(MAKEWORD(2, 0), &wsadata);
   if (err != 0)
   {
-	  LOG << "Unable to start winsock.\n";
+	spdlog::get("peakinvestigator")->error("Unable to start winsock.\n");
 	throw std::runtime_error("Unable to start winsock.");
   }
 #endif
