@@ -174,8 +174,11 @@ std::string TarFile::readNextFile(std::ostream& contents)
   contents.write(buffer, read);
 
   // read rest of entry (NULLs)
-  unsigned int remainder = TARHEADER_SIZE - (size % TARHEADER_SIZE);
-  gzread(file_, buffer, remainder);
+  unsigned int bytes_over = size % TARHEADER_SIZE;
+  if (bytes_over > 0)
+  {
+    gzread(file_, buffer, TARHEADER_SIZE - bytes_over);
+  }
 
   return header.name;
 }
