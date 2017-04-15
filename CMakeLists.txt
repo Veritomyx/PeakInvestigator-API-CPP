@@ -3,6 +3,7 @@ PROJECT(PeakInvestigatorSaaS)
 
 SET(PeakInvestigatorSaaS_VERSION 0.9.0)
 SET(CMAKE_CXX_STANDARD 11)
+SET(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
 
 INCLUDE(CTest)
 INCLUDE(cmake/InstallLocation.cmake)
