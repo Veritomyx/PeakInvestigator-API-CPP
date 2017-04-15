@@ -103,3 +103,15 @@ TEST(TarFile, WritesFromFile)
   ASSERT_STREQ("scan2.txt", name2.c_str());
   ASSERT_STREQ(out2.str().c_str(), in2.str().c_str());
 }
+
+TEST(TarFile, OvaryRegression)
+{
+  TarFile tarfile(GET_TEST_DATA_PATH("Ovary_PS.broken.tar.gz"), LOAD);
+  std::stringstream in1, in2;
+
+  std::string name1 = tarfile.readNextFile(in1);
+  ASSERT_STREQ("scan00478.mass_list.txt", name1.c_str());
+
+  std::string name2 = tarfile.readNextFile(in2);
+  ASSERT_STREQ("scan00177.mass_list.txt", name2.c_str());
+}
