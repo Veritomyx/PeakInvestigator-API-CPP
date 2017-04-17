@@ -41,14 +41,19 @@
 #include <zlib.h>
 #include <tarball.h>
 
+#include <spdlog/spdlog.h>
+
 #include "TarFile.h"
 
 #define BUFFER_SIZE 32768
 #define TARHEADER_SIZE sizeof(Tar::PosixTarHeader)
+#define TARFILE_LOGNAME "TarFile"
 
 using namespace Veritomyx::PeakInvestigator;
 
 typedef Tar::PosixTarHeader TarHeader;
+
+std::shared_ptr<spdlog::logger> TarFile::log_ = spdlog::stdout_color_mt(TARFILE_LOGNAME);
 
 TarFile::TarFile(std::string filename, Mode mode)
 {
@@ -80,6 +85,13 @@ TarFile::~TarFile()
   {
     close();
   }
+
+}
+
+void TarFile::setDebug(bool debug)
+{
+  debug_ = debug;
+  spdlog::get(TARFILE_LOGNAME)->set_level(debug ? spdlog::level::debug : spdlog::level::info);
 }
 
 void TarFile::close()
@@ -105,25 +117,39 @@ void TarFile::close()
 
 void TarFile::writeFile(const std::string& filename, std::istream& contents)
 {
+  auto log = spdlog::get(TARFILE_LOGNAME);
+  log->debug("Writing {}...", filename);
+
   const std::streampos start = contents.tellg();
   contents.ignore(std::numeric_limits<std::streamsize>::max());
   const std::streampos size = contents.gcount();
+  contents.clear();
   contents.seekg(start);
+  log->debug(".. State after seeking: {}", contents.rdstate());
 
   writeHeader_(filename, size);
-
   char buffer[BUFFER_SIZE];
   unsigned int total = 0;
   while(total < size)
   {
     contents.read(buffer, BUFFER_SIZE);
+    log->debug(".. State after read: {}", contents.rdstate());
+    if(contents.fail() && !contents.eof())
+    {
+      log->error(".... unable to read from istream buffer ({})", contents.rdstate());
+      break;
+    }
+
     const int read = contents.gcount();
+
     int written = gzwrite(file_, &buffer, read);
     if(read != written)
     {
       throw std::runtime_error("Problem writing data for " + filename);
     }
     total += written;
+
+    log->debug("...... {} of {} bytes written.", total, size);
   }
 
   if (total != size)
@@ -137,6 +163,8 @@ void TarFile::writeFile(const std::string& filename, std::istream& contents)
     gzputc(file_, 0);
     total++;
   }
+
+  log->debug("...Done!");
 }
 
 std::string TarFile::readNextFile(std::ostream& contents)

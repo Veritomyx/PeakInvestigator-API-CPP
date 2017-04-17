@@ -44,6 +44,11 @@
 
 struct gzFile_s;
 
+namespace spdlog
+{
+  class logger;
+}
+
 namespace Veritomyx
 {
   namespace PeakInvestigator
@@ -55,6 +60,8 @@ namespace Veritomyx
       public:
         TarFile(std::string filename, Mode mode);
         ~TarFile();
+
+        void setDebug(bool debug = true);
 
         void writeFile(const std::string& filename, std::istream &contents);
         std::string readNextFile(std::ostream& contents);
@@ -69,6 +76,9 @@ namespace Veritomyx
 
         Mode mode_;
         bool isOpen_;
+        bool debug_;
+
+        static std::shared_ptr<spdlog::logger> log_;
     };
   }
 }
