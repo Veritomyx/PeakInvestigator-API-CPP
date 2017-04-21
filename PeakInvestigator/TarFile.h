@@ -39,6 +39,7 @@
 
 #include <string>
 #include <istream>
+#include <memory>
 
 #include "PeakInvestigatorSaaS_export.h"
 
