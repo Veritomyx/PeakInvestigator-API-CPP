@@ -102,13 +102,13 @@ SftpFingerprints SftpAction::getFingerprints()
   }
 
   preCheck();
-  Json::Value fingerprints = response_object_->get("Fingerprints", Json::nullValue);
+  Json::Value fingerprints = getAttribute("Fingerprints");
   for (unsigned int i = 0; i < fingerprints.size(); i++)
   {
     Json::Value fingerprint = fingerprints[i];
-    std::string signature = fingerprint.get("Signature", Json::nullValue).asString();
-    std::string algorithm = fingerprint.get("Algorithm", Json::nullValue).asString();
-    std::string hash = fingerprint.get("Hash", Json::nullValue).asString();
+    std::string signature = fingerprint.get("Signature", Json::Value()).asString();
+    std::string algorithm = fingerprint.get("Algorithm", Json::Value()).asString();
+    std::string hash = fingerprint.get("Hash", Json::Value()).asString();
 
     std::string key = signature + "-" + algorithm;
     fingerprints_[key] = hash;

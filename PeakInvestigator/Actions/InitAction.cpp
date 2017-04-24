@@ -119,13 +119,13 @@ EstimatedCosts InitAction::getEstimatedCosts()
 
   preCheck();
 
-  Json::Value estimated_costs = response_object_->get("EstimatedCost", Json::nullValue);
+  Json::Value estimated_costs = getAttribute("EstimatedCost");
   for(unsigned int i = 0; i < estimated_costs.size(); i++)
   {
     Json::Value estimated_cost = estimated_costs[i];
-    std::string instrument = estimated_cost.get("Instrument", Json::nullValue).asString();
-    std::string RTO = estimated_cost.get("RTO", Json::nullValue).asString();
-    double cost = estimated_cost.get("Cost", Json::nullValue).asDouble();
+    std::string instrument = estimated_cost.get("Instrument", Json::Value()).asString();
+    std::string RTO = estimated_cost.get("RTO", Json::Value()).asString();
+    double cost = estimated_cost.get("Cost", Json::Value()).asDouble();
 
     ResponseTimeCosts costs = estimated_costs_.forInstrument(instrument);
     costs[RTO] = cost;

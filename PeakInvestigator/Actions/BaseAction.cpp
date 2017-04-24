@@ -132,30 +132,40 @@ int BaseAction::getErrorCode()
   return getIntAttribute("Error");
 }
 
+Json::Value BaseAction::getAttribute(std::string attribute) const
+{
+  if (!response_object_->isMember(attribute))
+  {
+    throw new std::invalid_argument(attribute + " is not a valid attribute.");
+  }
+
+  return response_object_->get(attribute, Json::Value());
+}
+
 std::string BaseAction::getStringAttribute(std::string attribute) const
 {
-  return response_object_->get(attribute, Json::nullValue).asString();
+  return getAttribute(attribute).asString();
 }
 
 int BaseAction::getIntAttribute(std::string attribute) const
 {
-  return response_object_->get(attribute, Json::nullValue).asInt();
+  return getAttribute(attribute).asInt();
 }
 
 long BaseAction::getLongAttribute(std::string attribute) const
 {
-  return response_object_->get(attribute, Json::nullValue).asInt64();
+  return getAttribute(attribute).asInt64();
 }
 
 double BaseAction::getDoubleAttribute(std::string attribute) const
 {
-  return response_object_->get(attribute, Json::nullValue).asDouble();
+  return getAttribute(attribute).asDouble();
 }
 
 #ifndef _WIN32
 struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 {
-  std::string date_time_string = response_object_->get(attribute, Json::nullValue).asString();
+  std::string date_time_string = getStringAttribute(attribute);
   struct tm datetime;
   strptime(date_time_string.c_str(), PARSE_DATE_FORMAT.c_str(), &datetime);
   return datetime;
@@ -164,7 +174,7 @@ struct tm BaseAction::getDateTimeAttribute(std::string attribute) const
 
 std::list<std::string> BaseAction::getStringListAttribute(std::string attribute) const
 {
-  Json::Value array = response_object_->get(attribute, Json::nullValue);
+  Json::Value array = getAttribute(attribute);
   std::list<std::string> values;
   for (unsigned int i = 0; i < array.size(); i++) {
     values.push_back(array[i].asString());
@@ -174,7 +184,7 @@ std::list<std::string> BaseAction::getStringListAttribute(std::string attribute)
 
 std::vector<std::string> BaseAction::getStringVectorAttribute(std::string attribute) const
 {
-  Json::Value array = response_object_->get(attribute, Json::nullValue);
+  Json::Value array = getAttribute(attribute);
   std::vector<std::string> values;
   for (unsigned int i = 0; i < array.size(); i++) {
     values.push_back(array[i].asString());

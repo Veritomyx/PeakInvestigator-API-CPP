@@ -130,15 +130,15 @@ double StatusAction::getActualCost()
 std::string StatusAction::getLogFilename()
 {
   preCheck();
-  Json::Value results_file_paths = response_object_->get("ResultFilePaths", Json::nullValue);
-  return results_file_paths.get("Log", Json::nullValue).asString();
+  Json::Value results_file_paths = getAttribute("ResultFilePaths");
+  return results_file_paths.get("Log", Json::Value()).asString();
 }
 
 std::string StatusAction::getResultsFilename()
 {
   preCheck();
-  Json::Value results_file_paths = response_object_->get("ResultFilePaths", Json::nullValue);
-  return results_file_paths.get("MassList", Json::nullValue).asString();
+  Json::Value results_file_paths = getAttribute("ResultFilePaths");
+  return results_file_paths.get("MassList", Json::Value()).asString();
 }
 
 std::string StatusAction::getErrorMessage()

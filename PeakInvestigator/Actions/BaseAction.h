@@ -90,6 +90,8 @@ namespace Veritomyx
 
         virtual int getErrorCode(void);
 
+        Json::Value getAttribute(std::string attribute) const;
+
         std::string getStringAttribute(std::string attribute) const;
 
         int getIntAttribute(std::string attribute) const;
