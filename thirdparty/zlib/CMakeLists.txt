@@ -12,7 +12,7 @@ ExternalProject_Add(
     URL http://zlib.net/zlib-1.2.11.tar.gz
     URL_MD5 1c9f62f0778697a09d36121ead88e08e
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/zlib
-    CMAKE_ARGS ${GTEST_CMAKE_ARGS}
+    CMAKE_ARGS ${GTEST_CMAKE_ARGS} -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 )
 
 # Create a zlib target to be used as a dependency
