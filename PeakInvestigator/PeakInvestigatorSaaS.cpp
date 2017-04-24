@@ -194,6 +194,8 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
   retval = curl_easy_perform(curl);
 
   delete[] postData;
+  curl_easy_cleanup(curl);
+
   if(retval != CURLE_OK)
   {
     throw std::runtime_error("Problem with CURL");
@@ -290,9 +292,6 @@ void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
 {
   spdlog::get(LOG_NAME)->debug("Trying to establish SSH session.");
 
-  socket_ = getConnectedSocket(action.getHost().c_str(),
-                                std::to_string(action.getPort()).c_str());
-
   ssh_session_ = libssh2_session_init();
   if(!ssh_session_)
   {
@@ -300,6 +299,9 @@ void PeakInvestigatorSaaS::establishSSHSession_(SftpAction& action)
   }
 
   state_ |= INITIALIZE_SSH_SESSION;
+
+  socket_ = getConnectedSocket(action.getHost().c_str(),
+                                std::to_string(action.getPort()).c_str());
 
   libssh2_session_set_timeout(ssh_session_, TIMEOUT);
   libssh2_session_set_blocking(ssh_session_, 1);
@@ -376,7 +378,6 @@ void PeakInvestigatorSaaS::disconnect_()
 #else
     close(socket_);
 #endif
-    freeaddrinfo(host_info_);
     state_ ^= CONNECT_SOCKET;
   case LIBRARY_INITIALIZED:
     break;
@@ -406,6 +407,7 @@ int PeakInvestigatorSaaS::getConnectedSocket(const char* host, const char* port)
 
   int sock = socket(host_info_->ai_family, host_info_->ai_socktype, host_info_->ai_protocol);
   retval = connect(sock, host_info_->ai_addr, host_info_->ai_addrlen);
+  freeaddrinfo(host_info_);
 
   if (retval != 0)
   {
