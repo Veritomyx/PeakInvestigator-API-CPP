@@ -176,12 +176,16 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
     throw std::runtime_error("Unable to initialize CURL easy.");
   }
 
+  auto log = spdlog::get(LOG_NAME);
+
   std::string url = "https://" + hostname_ + path_;
   std::string response;
   response.reserve(1000);
 
-  // need to copy query to a C-string for some reason
   std::string query = action->buildQuery();
+  log->debug("Query: {}", query);
+
+  // need to copy query to a C-string for some reason
   char* postData = new char[query.size() + 1];
   std::strcpy(postData, query.c_str());
 
@@ -201,6 +205,7 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
     throw std::runtime_error("Problem with CURL");
   }
 
+  log->debug("Reponse: {}", response);
   return response;
 }
 
