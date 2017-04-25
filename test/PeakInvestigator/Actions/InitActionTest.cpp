@@ -49,9 +49,12 @@ TEST(InitActionTest, QueryString)
   attributes.end_mass = 1900;
 
   InitAction action("username", "password", 1234, "1.2", 10, attributes);
+  InitAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
                 action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
+                action2.buildQuery().c_str());
 }
 
 TEST(InitActionTest, QueryString_withCalibration)
@@ -64,9 +67,12 @@ TEST(InitActionTest, QueryString_withCalibration)
   attributes.end_mass = 1900;
 
   InitAction action("username", "password", 1234, "1.2", 10, attributes, 1);
+  InitAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
                 action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900",
+                action2.buildQuery().c_str());
 }
 
 TEST(InitActionTest, QueryString_withClient)
@@ -79,9 +85,12 @@ TEST(InitActionTest, QueryString_withClient)
   attributes.end_mass = 1900;
 
   InitAction action("username", "password", 1234, "1.2", 10, attributes, 0, "Testing");
+  InitAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
                 action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
+                action2.buildQuery().c_str());
 }
 
 TEST(InitActionTest, QueryString_withCalibrationAndClientKey)
@@ -94,9 +103,12 @@ TEST(InitActionTest, QueryString_withCalibrationAndClientKey)
   attributes.end_mass = 1900;
 
   InitAction action("username", "password", 1234, "1.2", 10, attributes, 1, "Testing");
+  InitAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
                 action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=INIT&ID=1234&PI_Version=1.2&ScanCount=10&CalibrationCount=1&MaxPoints=12345&MinMass=100&MaxMass=2000&StartMass=120&EndMass=1900&ClientKey=Testing",
+                action2.buildQuery().c_str());
 }
 
 TEST(InitActionTest, QueryString_Pointer)
@@ -134,6 +146,18 @@ TEST(InitActionTest, ExampleResponse)
   ASSERT_EQ(115.01, action.getFunds());
 
   EstimatedCosts estimated_costs = action.getEstimatedCosts();
+  ASSERT_EQ(27.60, estimated_costs.forInstrument("TOF").getCost("RTO-24"));
+  ASSERT_EQ(36.22, estimated_costs.forInstrument("Orbitrap").getCost("RTO-24"));
+  ASSERT_EQ(32.59, estimated_costs.forInstrument("IonTrap").getCost("RTO-24"));
+  ASSERT_EQ(36.22, estimated_costs.getMaximumCost("RTO-24"));
+  ASSERT_THROW(estimated_costs.getMaximumCost("RTO-8"), std::invalid_argument);
+
+  InitAction action2(action);
+  ASSERT_STREQ("V-504.1551", action2.getJob().c_str());
+  ASSERT_EQ(504, action2.getProjectId());
+  ASSERT_EQ(115.01, action2.getFunds());
+
+  estimated_costs = action2.getEstimatedCosts();
   ASSERT_EQ(27.60, estimated_costs.forInstrument("TOF").getCost("RTO-24"));
   ASSERT_EQ(36.22, estimated_costs.forInstrument("Orbitrap").getCost("RTO-24"));
   ASSERT_EQ(32.59, estimated_costs.forInstrument("IonTrap").getCost("RTO-24"));

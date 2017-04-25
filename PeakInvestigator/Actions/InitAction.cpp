@@ -62,6 +62,30 @@ InitAction::InitAction(std::string user, std::string code, int project_id, std::
   client_key_ = client_key;
 }
 
+InitAction::InitAction(const InitAction& action)
+{
+	user_ = action.user_;
+	code_ = action.code_;
+	action_ = action.action_;
+
+	Json::Value* value = new Json::Value();
+	*value = *action.response_object_;
+	response_object_.reset(value);
+
+	project_id_ = action.project_id_;
+	version_of_PI_ = action.version_of_PI_;
+	scan_count_ = action.scan_count_;
+	calibration_count_ = action.calibration_count_;
+	attributes_.max_points = action.attributes_.max_points;
+	attributes_.min_mass = action.attributes_.min_mass;
+	attributes_.max_mass = action.attributes_.max_mass;
+	attributes_.start_mass = action.attributes_.start_mass;
+	attributes_.end_mass = action.attributes_.end_mass;
+	client_key_ = action.client_key_;
+
+	estimated_costs_ = action.estimated_costs_;
+}
+
 std::string InitAction::buildQuery() const
 {
   std::string query = BaseAction::buildQuery();

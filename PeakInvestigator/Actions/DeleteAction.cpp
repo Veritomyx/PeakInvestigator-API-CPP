@@ -38,6 +38,8 @@
 
 #include "DeleteAction.h"
 
+#include <json/json.h>
+
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string DeleteAction::EXAMPLE_RESPONSE("{\"Action\":\"DELETE\",\"Job\":\"P-504.4256\",\"Datetime\":\"2016-02-03 18:35:06\"}");
@@ -46,6 +48,19 @@ DeleteAction::DeleteAction(std::string user, std::string code, std::string jobID
   BaseAction(user, code, "DELETE")
 {
   jobID_ = jobID;
+}
+
+DeleteAction::DeleteAction(const DeleteAction& action)
+{
+  user_ = action.user_;
+  code_ = action.code_;
+  action_ = action.action_;
+
+  Json::Value* value = new Json::Value();
+  *value = *action.response_object_;
+  response_object_.reset(value);
+
+  jobID_ = action.jobID_;
 }
 
 std::string DeleteAction::buildQuery() const

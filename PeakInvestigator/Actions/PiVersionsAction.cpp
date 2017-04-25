@@ -38,6 +38,8 @@
 
 #include "PiVersionsAction.h"
 
+#include <json/json.h>
+
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string PiVersionsAction::EXAMPLE_RESPONSE_1("{\"Action\":\"PI_VERSIONS\",\"Current\":\"1.2\",\"LastUsed\":\"\",\"Count\":2,\"Versions\":[\"1.2\",\"1.0.0\"]}");
@@ -45,6 +47,17 @@ const std::string PiVersionsAction::EXAMPLE_RESPONSE_1("{\"Action\":\"PI_VERSION
 PiVersionsAction::PiVersionsAction(std::string user, std::string code) :
   BaseAction(user, code, "PI_VERSIONS")
 {
+}
+
+PiVersionsAction::PiVersionsAction(const PiVersionsAction& action)
+{
+  user_ = action.user_;
+  code_ = action.code_;
+  action_ = action.action_;
+
+  Json::Value* value = new Json::Value();
+  *value = *action.response_object_;
+  response_object_.reset(value);
 }
 
 std::string PiVersionsAction::buildQuery() const

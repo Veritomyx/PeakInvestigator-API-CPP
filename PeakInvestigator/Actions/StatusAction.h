@@ -60,6 +60,7 @@ namespace Veritomyx
         static const std::string EXAMPLE_RESPONSE_DELETED;
 
         StatusAction(std::string user, std::string code, std::string job);
+        StatusAction(const StatusAction& action);
 
         std::string buildQuery() const;
 

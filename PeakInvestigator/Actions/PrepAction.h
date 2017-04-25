@@ -59,6 +59,7 @@ namespace Veritomyx
         static const std::string EXAMPLE_RESPONSE_READY;
 
         PrepAction(std::string user, std::string code, int projectID, std::string filename);
+        PrepAction(const PrepAction& action);
 
         std::string buildQuery() const;
 

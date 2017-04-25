@@ -52,6 +52,19 @@ StatusAction::StatusAction(std::string user, std::string code, std::string job) 
   job_ = job;
 }
 
+StatusAction::StatusAction(const StatusAction& action)
+{
+  user_ = action.user_;
+  code_ = action.code_;
+  action_ = action.action_;
+
+  Json::Value* value = new Json::Value();
+  *value = *action.response_object_;
+  response_object_.reset(value);
+
+  job_ = action.job_;
+}
+
 std::string StatusAction::buildQuery() const
 {
   std::string query = BaseAction::buildQuery();

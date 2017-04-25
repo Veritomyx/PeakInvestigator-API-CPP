@@ -42,9 +42,12 @@ using namespace Veritomyx::PeakInvestigator;
 TEST(PiVersionsActionTest, QueryString)
 {
   PiVersionsAction action("username", "password");
+  PiVersionsAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=PI_VERSIONS",
                action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=PI_VERSIONS",
+               action2.buildQuery().c_str());
 }
 
 // "{\"Action\":\"PI_VERSIONS\",\"Current\":\"1.2\",\"LastUsed\":\"\",\"Count\":2,\"Versions\":[\"1.2\",\"1.0.0\"]}"
@@ -57,6 +60,15 @@ TEST(PiVersionsActionTest, ExampleResponse)
   ASSERT_STREQ("", action.getLastUsedVersion().c_str());
 
   std::vector<std::string> versions = action.getVersions();
+  ASSERT_STREQ("1.2", versions.at(0).c_str());
+  ASSERT_STREQ("1.0.0", versions.at(1).c_str());
+
+  PiVersionsAction action2(action);
+
+  ASSERT_STREQ("1.2", action2.getCurrentVersion().c_str());
+  ASSERT_STREQ("", action2.getLastUsedVersion().c_str());
+
+  versions = action2.getVersions();
   ASSERT_STREQ("1.2", versions.at(0).c_str());
   ASSERT_STREQ("1.0.0", versions.at(1).c_str());
 }

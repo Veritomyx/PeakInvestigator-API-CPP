@@ -66,6 +66,7 @@ namespace Veritomyx
         static const std::string EXAMPLE_RESPONSE;
 
         SftpAction(std::string user, std::string code, int project_ID);
+        SftpAction(const SftpAction& action);
         virtual ~SftpAction() {}
 
         std::string buildQuery() const;

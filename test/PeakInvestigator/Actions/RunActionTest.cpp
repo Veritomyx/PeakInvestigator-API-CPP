@@ -42,17 +42,23 @@ using namespace Veritomyx::PeakInvestigator;
 TEST(RunActionTest, QueryString_WithoutCalibration)
 {
   RunAction action("username", "password", "P-1234", "RTO-24", "example.tar");
+  RunAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar",
                action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar",
+               action2.buildQuery().c_str());
 }
 
 TEST(RunActionTest, QueryString_WithCalibration)
 {
   RunAction action("username", "password", "P-1234", "RTO-24", "example.tar", "calib.tar");
+  RunAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar&CalibrationFile=calib.tar",
                action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=RUN&Job=P-1234&RTO=RTO-24&InputFile=example.tar&CalibrationFile=calib.tar",
+               action2.buildQuery().c_str());
 }
 
 // "{\"Action\":\"RUN\", \"Job\":\"P-504.1463\"}"
@@ -62,4 +68,8 @@ TEST(RunActionTest, ExampleResponse)
   action.processResponse(RunAction::EXAMPLE_RESPONSE);
 
   ASSERT_STREQ("P-504.1463", action.getJob().c_str());
+
+  RunAction action2(action);
+
+  ASSERT_STREQ("P-504.1463", action2.getJob().c_str());
 }

@@ -38,6 +38,8 @@
 
 #include "RunAction.h"
 
+#include <json/json.h>
+
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string RunAction::EXAMPLE_RESPONSE("{\"Action\":\"RUN\", \"Job\":\"P-504.1463\"}");
@@ -61,6 +63,22 @@ RunAction::RunAction(std::string user, std::string code, std::string job, std::s
   RTO_ = RTO;
   input_filename_ = input_filename;
   calibration_filename_ = calibration_filename;
+}
+
+RunAction::RunAction(const RunAction& action)
+{
+  user_ = action.user_;
+  code_ = action.code_;
+  action_ = action.action_;
+
+  Json::Value* value = new Json::Value();
+  *value = *action.response_object_;
+  response_object_.reset(value);
+
+  job_ = action.job_;
+  RTO_ = action.RTO_;
+  input_filename_ = action.input_filename_;
+  calibration_filename_ = action.calibration_filename_;
 }
 
 std::string RunAction::buildQuery() const

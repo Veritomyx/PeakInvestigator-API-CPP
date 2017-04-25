@@ -38,6 +38,8 @@
 
 #include "PrepAction.h"
 
+#include <json/json.h>
+
 using namespace Veritomyx::PeakInvestigator;
 
 const std::string PrepAction::EXAMPLE_RESPONSE_ANALYZING("{\"Action\":\"PREP\", \"File\":\"WatersQ-TOF.tar\", \"Status\":\"Analyzing\", \"PercentComplete\":\"90%\"}");
@@ -48,6 +50,20 @@ PrepAction::PrepAction(std::string user, std::string code, int projectID, std::s
 {
   projectID_ = projectID;
   filename_ = filename;
+}
+
+PrepAction::PrepAction(const PrepAction& action)
+{
+  user_ = action.user_;
+  code_ = action.code_;
+  action_ = action.action_;
+
+  Json::Value* value = new Json::Value();
+  *value = *action.response_object_;
+  response_object_.reset(value);
+
+  projectID_ = action.projectID_;
+  filename_ = action.filename_;
 }
 
 std::string PrepAction::buildQuery() const {

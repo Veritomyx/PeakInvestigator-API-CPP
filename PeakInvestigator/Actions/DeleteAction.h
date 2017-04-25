@@ -58,6 +58,7 @@ namespace Veritomyx
         static const std::string EXAMPLE_RESPONSE;
 
         DeleteAction(std::string user, std::string code, std::string jobID);
+		DeleteAction(const DeleteAction& action);
 
         std::string buildQuery() const;
 

@@ -94,6 +94,7 @@ namespace Veritomyx
         InitAction(std::string user, std::string code,
                    int project_id, std::string version_of_PI, int scan_count,
                    const JobAttributes& attributes, int calibration_count = 0, std::string client_key = "");
+        InitAction(const InitAction& init);
 
         std::string buildQuery() const;
 

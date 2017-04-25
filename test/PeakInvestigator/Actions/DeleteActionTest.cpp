@@ -44,9 +44,12 @@ using namespace Veritomyx::PeakInvestigator;
 TEST(DeleteActionTest, QueryString)
 {
   DeleteAction action("username", "password", "P-1234");
+  DeleteAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=DELETE&Job=P-1234",
                action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=DELETE&Job=P-1234",
+	  action2.buildQuery().c_str());
 }
 
 // "{\"Action\":\"DELETE\",\"Job\":\"P-504.4256\",\"Datetime\":\"2016-02-03 18:35:06\"}"
@@ -57,6 +60,9 @@ TEST(DeleteActionTest, ExampleResponse)
   action.processResponse(DeleteAction::EXAMPLE_RESPONSE);
 
   ASSERT_STREQ("P-504.4256", action.getJob().c_str());
+
+  DeleteAction action2(action);
+  ASSERT_STREQ("P-504.4256", action2.getJob().c_str());
 
 #ifndef _WIN32
   struct tm datetime = action.getDateTime();

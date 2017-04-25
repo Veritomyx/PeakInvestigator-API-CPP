@@ -49,6 +49,20 @@ SftpAction::SftpAction(std::string user, std::string code, int project_ID) :
   project_ID_ = project_ID;
 }
 
+SftpAction::SftpAction(const SftpAction& action)
+{
+	user_ = action.user_;
+	code_ = action.code_;
+	action_ = action.action_;
+
+	Json::Value* value = new Json::Value();
+	*value = *action.response_object_;
+	response_object_.reset(value);
+
+	project_ID_ = action.project_ID_;
+	fingerprints_ = action.fingerprints_;
+}
+
 std::string SftpAction::buildQuery() const
 {
   std::string query = BaseAction::buildQuery();

@@ -51,9 +51,12 @@ char* format_datetime(struct tm& datetime) {
 TEST(StatusActionTest, QueryString)
 {
   StatusAction action("username", "password", "P-1234");
+  StatusAction action2(action);
 
   ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=STATUS&Job=P-1234",
                action.buildQuery().c_str());
+  ASSERT_STREQ("Version=5.4&User=username&Code=password&Action=STATUS&Job=P-1234",
+               action2.buildQuery().c_str());
 }
 
 // "{\"Action\":\"STATUS\", \"Job\":\"P-504.5148\", \"Status\":\"Preparing\", \"Datetime\":\"2016-02-03 18:18:12\"}"
@@ -64,6 +67,11 @@ TEST(StatusActionTest, ExampleResponse_Preparing)
 
   ASSERT_STREQ("P-504.5148", action.getJob().c_str());
   ASSERT_EQ(StatusAction::PREPARING, action.getStatus());
+
+  StatusAction action2(action);
+
+  ASSERT_STREQ("P-504.5148", action2.getJob().c_str());
+  ASSERT_EQ(StatusAction::PREPARING, action2.getStatus());
 
 #ifndef _WIN32
   struct tm datetime = action.getDateTime();
@@ -82,6 +90,11 @@ TEST(StatusActionTest, ExampleResponse_Running)
 
   ASSERT_STREQ("P-504.5148", action.getJob().c_str());
   ASSERT_EQ(StatusAction::RUNNING, action.getStatus());
+
+  StatusAction action2(action);
+
+  ASSERT_STREQ("P-504.5148", action2.getJob().c_str());
+  ASSERT_EQ(StatusAction::RUNNING, action2.getStatus());
 
 #ifndef _WIN32
   struct tm datetime = action.getDateTime();
@@ -115,6 +128,25 @@ TEST(StatusActionTest, ExampleResponse_Done)
   ASSERT_EQ(0.36, action.getActualCost());
   ASSERT_STREQ("/files/P-504.5148/P-504.5148.log.txt", action.getLogFilename().c_str());
   ASSERT_STREQ("/files/P-504.5148/P-504.5148.mass_list.tar", action.getResultsFilename().c_str());
+
+  StatusAction action2(action);
+
+  ASSERT_STREQ("P-504.5148", action2.getJob().c_str());
+  ASSERT_EQ(StatusAction::DONE, action2.getStatus());
+
+#ifndef _WIN32
+  struct tm datetime = action2.getDateTime();
+  buffer = format_datetime(datetime);
+  ASSERT_STREQ("2016-02-03 18:31:05", buffer);
+
+  delete buffer;
+#endif
+
+  ASSERT_EQ(3, action2.getNumberOfInputScans());
+  ASSERT_EQ(3, action2.getNumberOfCompleteScans());
+  ASSERT_EQ(0.36, action2.getActualCost());
+  ASSERT_STREQ("/files/P-504.5148/P-504.5148.log.txt", action2.getLogFilename().c_str());
+  ASSERT_STREQ("/files/P-504.5148/P-504.5148.mass_list.tar", action2.getResultsFilename().c_str());
 }
 
 // "{\"Action\":\"STATUS\", \"Job\":\"P-504.1463\", \"Status\":\"Deleted\", \"Datetime\":\"2016-02-03 18:36:05\"}"
@@ -133,4 +165,9 @@ TEST(StatusActionTest, ExampleResponse_Deleted)
 
   delete buffer;
   #endif
+
+  StatusAction action2(action);
+
+  ASSERT_STREQ("P-504.1463", action2.getJob().c_str());
+  ASSERT_EQ(StatusAction::DELETED, action2.getStatus());
 }

@@ -60,13 +60,12 @@ namespace Veritomyx
 
     class PEAKINVESTIGATORSAAS_EXPORT BaseAction
     {
-      private:
+      protected:
 
         std::string user_;
         std::string code_;
         std::string action_;
 
-      protected:
         std::unique_ptr<Json::Value> response_object_;
 
       public:

@@ -72,7 +72,7 @@ namespace Veritomyx
    */
         RunAction(std::string user, std::string code, std::string job, std::string RTO,
                   std::string input_filename, std::string calibration_filename = std::string());
-
+        RunAction(const RunAction& action);
         std::string buildQuery() const;
 
       private:

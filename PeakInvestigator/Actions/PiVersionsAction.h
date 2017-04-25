@@ -56,6 +56,7 @@ namespace Veritomyx
         static const std::string EXAMPLE_RESPONSE_1;
 
         PiVersionsAction(std::string user, std::string code);
+        PiVersionsAction(const PiVersionsAction& action);
 
         std::string buildQuery() const;
 
