@@ -43,6 +43,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <memory>
 
 #include <PeakInvestigator/PeakInvestigatorSaaS_export.h>
 
@@ -66,7 +67,7 @@ namespace Veritomyx
         std::string action_;
 
       protected:
-        Json::Value* response_object_;
+        std::unique_ptr<Json::Value> response_object_;
 
       public:
         const static std::string VERSION_OF_API;
