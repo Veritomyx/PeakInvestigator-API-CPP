@@ -49,8 +49,6 @@ using namespace Veritomyx::PeakInvestigator;
 const std::string BaseAction::VERSION_OF_API("5.4");
 const std::string BaseAction::PARSE_DATE_FORMAT("%Y-%m-%d %H:%M:%S");
 
-#include <iostream>
-
 BaseAction::BaseAction()
 {
   response_object_.reset(new Json::Value());
@@ -67,7 +65,6 @@ BaseAction::BaseAction(std::string user, std::string code, std::string action)
 
 BaseAction::~BaseAction()
 {
-	std::cout << "Using std::unique_ptr method." << std::endl;
 }
 
 std::string BaseAction::buildQuery() const
