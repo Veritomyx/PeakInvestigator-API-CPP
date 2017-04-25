@@ -135,7 +135,7 @@ TEST(StatusActionTest, ExampleResponse_Done)
   ASSERT_EQ(StatusAction::DONE, action2.getStatus());
 
 #ifndef _WIN32
-  struct tm datetime = action2.getDateTime();
+  datetime = action2.getDateTime();
   buffer = format_datetime(datetime);
   ASSERT_STREQ("2016-02-03 18:31:05", buffer);
 
