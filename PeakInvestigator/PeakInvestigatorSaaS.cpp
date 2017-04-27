@@ -36,6 +36,7 @@
 
 #include <stdexcept>
 #include <sstream>
+#include <limits>
 
 #include <curl/curl.h>
 #include <libssh2.h>
@@ -230,9 +231,12 @@ void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilen
 
   if(progress)
   {
-    file.seekg(0, file.end);
-    progress->initialize(file.tellg(), "Uploading file to SFTP server...");
-    file.seekg(0, file.beg);
+    const std::streampos start = file.tellg();
+    auto max_size = (std::numeric_limits<std::streamsize>::max)();
+    file.ignore((std::numeric_limits<std::streamsize>::max)());
+    progress->initialize(file.gcount(), "Uploading file to SFTP server...");
+    file.clear();
+    file.seekg(start);
   }
 
   uploadFile_(file, sftp, progress);
