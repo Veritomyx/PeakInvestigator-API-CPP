@@ -212,7 +212,7 @@ std::string PeakInvestigatorSaaS::executeAction(BaseAction *action)
 
 void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilename, std::string remoteFilename, AbstractProgress* progress)
 {
-  std::ifstream file(localFilename);
+  std::ifstream file(localFilename, std::ios_base::in | std::ios_base::binary);
   if(!file)
   {
     throw std::runtime_error("Unable to open local file: " + localFilename);
