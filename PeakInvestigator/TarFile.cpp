@@ -179,6 +179,10 @@ std::string TarFile::readNextFile(std::ostream& contents)
   {
     throw std::runtime_error("Problem reading a tar header of " + filename_);
   }
+  else if (header.name[0] == '\0')
+  {
+	  return "";
+  }
 
   long long size;
   std::sscanf(header.size, "%011llo", &size);
