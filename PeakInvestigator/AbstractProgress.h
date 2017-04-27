@@ -53,8 +53,8 @@ namespace Veritomyx
     {
       public:
         virtual ~AbstractProgress() {} ;
-        virtual void initialize(const int total, const std::string label) = 0;
-        virtual void setProgress(const int progress) = 0;
+        virtual void initialize(const long long total, const std::string label) = 0;
+        virtual void setProgress(const long long progress) = 0;
         virtual void finish() = 0;
     };
   }

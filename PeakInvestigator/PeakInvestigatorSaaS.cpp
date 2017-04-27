@@ -254,7 +254,7 @@ void PeakInvestigatorSaaS::uploadFile(SftpAction& action, std::string localFilen
 
 void PeakInvestigatorSaaS::downloadFile(SftpAction& action, std::string remoteFilename, std::string localFilename, AbstractProgress* progress)
 {
-  std::ofstream file(localFilename);
+  std::ofstream file(localFilename, std::ios_base::binary);
   if(!file)
   {
     throw std::runtime_error("Unable to open local file: " + localFilename);
@@ -459,7 +459,7 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
   while(!file.eof())
   {
     file.read(buffer, BUFFER_SIZE);
-    int read = file.gcount();
+    std::size_t read = static_cast<std::size_t>(file.gcount());
     log->debug("... read {} of {} possible bytes.", read, BUFFER_SIZE);
 
     char* ptr = buffer;
@@ -493,7 +493,7 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
 
 void PeakInvestigatorSaaS::downloadFile_(std::ofstream& file, _LIBSSH2_SFTP_HANDLE* sftp, AbstractProgress* progress)
 {
-  int read, transferred = 0;
+  int read = 0, transferred = 0;
   char buffer[BUFFER_SIZE];
 
   spdlog::get(LOG_NAME)->debug("Downloading file...");
