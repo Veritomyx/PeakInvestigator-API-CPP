@@ -449,12 +449,14 @@ void PeakInvestigatorSaaS::uploadFile_(std::ifstream& file, _LIBSSH2_SFTP_HANDLE
   int written, transferred = 0;
   char buffer[BUFFER_SIZE];
 
-  spdlog::get(LOG_NAME)->debug("Uploading file...");
+  auto log = spdlog::get(LOG_NAME);
+  log->debug("Uploading file...");
 
   while(!file.eof())
   {
     file.read(buffer, BUFFER_SIZE);
     int read = file.gcount();
+    log->debug("... read {} of {} possible bytes.", read, BUFFER_SIZE);
 
     char* ptr = buffer;
     while(read)
