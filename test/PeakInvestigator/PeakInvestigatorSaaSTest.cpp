@@ -137,8 +137,8 @@ class ProgressTracker : public AbstractProgress
   public:
     ProgressTracker() {}
     ~ProgressTracker() {}
-    void initialize(const int total, const std::string label) { total_ = total; }
-    void setProgress(const int progress) { progress_ = progress; }
+    void initialize(const long long total, const std::string label) { total_ = total; }
+    void setProgress(const long long progress) { progress_ = progress; }
     void finish() {}
 
     int getTotal() const { return total_; }
